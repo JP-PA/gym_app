@@ -1,33 +1,64 @@
 // Importo la configuracion de la base de datos para empezar a hacer querys
-const db = require("../config/db.configuration")
+const db = require("../config/db.configuration").promise()
 
 // Se obtiene todos los usuarios
-const obtenerTodoslosusuarios = (callback) =>{
-    db.query(`SELECT * FROM usuarios`,callback)
-}
+const obtenerTodosLosUsuarios = async () => {
+   const [rows] = await db.query(`SELECT * FROM usuarios`);
+return rows};
 
 // se obtiene un usuario segun el id
-const obtenerusuario = (id,callback) => {
-    db.query(`SELECT * FROM usuarios WHERE id = ? `,[id],callback)
+const obtenerUsuario = async (id) => {
+    const [rows] = await db.query(`SELECT * FROM usuarios WHERE id = ? `,[id]);
+     
+    if(rows.length === 0) return null;
+
+    return rows[0];
 }
 
 // Se crea usuarios
-const crearusuarios = (id,nombre,correo,callback) => {
-    db.query(`INSERT INTO usuarios (id,nombre,correo) VALUES (?,?,?)`,
-        [id,nombre,correo]
-        ,callback)
-}
+const crearUsuarios = async ({nombre,correo}) => 
+{  
+    const [result] = await db.query(`INSERT INTO usuarios (nombre,correo) VALUES (?,?)`,
+        [nombre,correo]);
+
+        if(result.affectedRows=== 0) return null;
+        
+        return {
+            id : result.insertId,
+            nombre,
+            correo
+        };
+};
 
 // se actualiza usuarios
-const actualizarusuarios = (id,nombre,correo,callback) => {
-    db.query(`UPDATE FROM usuarios SET nombre = ?,correo = ? WHERE id = ? `,[id,nombre,correo],callback)
+const actualizarUsuarios = async ({id,nombre,correo}) => {
+    
+    const [result]= await db.query(`UPDATE usuarios 
+        SET nombre = ?,correo = ? WHERE id = ? `,[nombre,correo,id]);
 
-}
+        if(result.affectedRows === 0)    return null;
+        
+        return {
+            id,
+            nombre,
+            correo
+        };
+};
 
 // se elimina usuarios
-const eliminarusuarios = (id,callback) =>{
-    db.query(`DELETE FROM usuarios WHERE id = ?`,[id],callback)
+const eliminarUsuarios = async (id) =>{
+    const [result] = await db.query(`DELETE FROM usuarios WHERE id = ?`,[id]);
+    
+    if(result.affectedRows === 0)   return null;
+    
+
+    return true;
 }
 
-module.export = {obtenerTodoslosusuarios,obtenerusuario,crearusuarios,actualizarusuarios,eliminarusuarios}
+module.exports = 
+{obtenerTodosLosUsuarios,
+obtenerUsuario,
+crearUsuarios,
+actualizarUsuarios,
+eliminarUsuarios}
 

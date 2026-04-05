@@ -18,7 +18,7 @@ const obtenerDetalleProducto = async(nombre) =>{
         JOIN ventas ON detalle_ventas.venta_id = ventas.id
         WHERE productos.nombre = ?`,[nombre])
 
-        if(rows.lenght === 0) return null
+        if(rows.length === 0) return null
 
         return rows[0]
 
@@ -27,7 +27,7 @@ const obtenerDetalleProducto = async(nombre) =>{
 
 const crearDetalleVenta = async ({venta_id,producto_id,cantidad,subtotal}) => {
     const [result] = await db.query(`
-        INSERT INTO detalle_venta (venta_id,producto_id,cantidad,subtotal) 
+        INSERT INTO detalle_ventas(venta_id,producto_id,cantidad,subtotal) 
         VALUES (?,?,?,?)`[venta_id,producto_id,cantidad,subtotal])
 
         if(result.affectedRows === 0) return null
@@ -43,7 +43,7 @@ const crearDetalleVenta = async ({venta_id,producto_id,cantidad,subtotal}) => {
 
 const actualizarDetalleVenta = async({id,venta_id,producto_id,cantidad,subtotal}) => {
     const [result] = await db.query(
-        `UPDATE detalle_venta 
+        `UPDATE detalle_ventas 
         SET venta_id = ?,
         producto_id = ?,
         cantidad = ?,
@@ -63,9 +63,9 @@ const actualizarDetalleVenta = async({id,venta_id,producto_id,cantidad,subtotal}
 }
 
 const eliminarDetalleVenta = async (id) => {
-    const[result] = await db.query(`DELETE FROM detalle_venta WHERE id = ?`,[id])
+    const[result] = await db.query(`DELETE FROM detalle_ventas WHERE id = ?`,[id])
 
-    if(result.affectedRows) return null
+    if(result.affectedRows === 0) return null
 
     return true
 }

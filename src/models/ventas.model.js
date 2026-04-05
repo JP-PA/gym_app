@@ -9,7 +9,7 @@ const obtenerTodosLasVentas = async () => {
 
 // se obtiene venta segun nombre de usuario
 const obtenerVenta = async (nombre) => {
-    const [rows] = db.query(`
+    const [rows] = await db.query(`
         SELECT 
         ventas.fecha,
         ventas.total,

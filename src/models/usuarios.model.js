@@ -14,14 +14,21 @@ const obtenerUsuario = async (id) => {
 
     return rows[0];
 }
+const obtenerUsuarioporcorreo = async(correo) => {
+    const [rows] = await db.query(`SELECT * FROM usuarios WHERE correo = ? `,[correo]);
+
+    if(rows.length === 0) return null;
+
+    return rows[0];
+}
 
 // Se crea usuarios
-const crearUsuarios = async ({nombre,correo}) => 
+const crearUsuarios = async ({nombre,correo,password}) => 
 {  
-    const [result] = await db.query(`INSERT INTO usuarios (nombre,correo) VALUES (?,?)`,
-        [nombre,correo]);
+    const [result] = await db.query(`INSERT INTO usuarios (nombre,correo,password) VALUES (?,?,?)`,
+        [nombre,correo,password]);
 
-        if(result.affectedRows=== 0) return null;
+        if(result.affectedRows === 0) return null;
         
         return {
             id : result.insertId,
@@ -31,10 +38,10 @@ const crearUsuarios = async ({nombre,correo}) =>
 };
 
 // se actualiza usuarios
-const actualizarUsuarios = async ({id,nombre,correo}) => {
+const actualizarUsuarios = async ({id,nombre,password}) => {
     
     const [result]= await db.query(`UPDATE usuarios 
-        SET nombre = ?,correo = ? WHERE id = ? `,[nombre,correo,id]);
+        SET nombre = ?,correo = ?,password = ? WHERE id = ? `,[nombre,correo,password,id]);
 
         if(result.affectedRows === 0)    return null;
         
@@ -60,5 +67,6 @@ module.exports =
 obtenerUsuario,
 crearUsuarios,
 actualizarUsuarios,
-eliminarUsuarios}
+eliminarUsuarios,
+obtenerUsuarioporcorreo}
 

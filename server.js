@@ -8,6 +8,8 @@ const ProductoRoutes = require("./src/routes/productos.routes")
 const membresiaRoutes = require("./src/routes/membresias.routes")
 const ventasRoutes = require("./src/routes/ventas.routes")
 
+app.use("/usuarios",usuarioRoutes)
+
 app.listen(3000 , () => {
     console.log("Servidor escuchando en el puerto 3000")
 })

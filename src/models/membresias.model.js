@@ -1,28 +1,27 @@
 // Importo la configuracion de la base de datos para empezar a hacer querys
-import { Connection } from "mysql2";
 import db from "../config/db.configuration.js"
 
-const conecction = db.promise();
+const connection = db.promise();
 
 // Se obtiene todas las membresias
-const obtenerTodosLasMembresias = async () =>{
-    const [rows]= await conecction.query(`SELECT * FROM membresias`)
+const obtenerTodasLasMembresias = async () =>{
+    const [rows]= await connection.query(`SELECT * FROM membresias`)
     return rows
 }
 
 // se obtiene una membresia segun el nombre del usuario
-const obtenerMembresia = async (nombre) => {
-    const [rows] = await conecction.query(
+const obtenerMembresia = async (usuario_id) => {
+    const [rows] = await connection.query(
         `SELECT 
           membresias.tipo,
           membresias.precio,
           membresias.fecha_inicio,
           membresias.fecha_fin,
           membresias.estado,
-          usuarios.nombre AS usuarios_nombre 
+          usuarios.nombre AS nombre_usuario
         FROM membresias
         JOIN usuarios ON membresias.usuario_id = usuarios.id  
-        WHERE usuario.nombre = ? `,[nombre])
+        WHERE m.usuario_id = ? `,[usuario_id])
 
         if(rows.length === 0) return null;
 
@@ -30,49 +29,49 @@ const obtenerMembresia = async (nombre) => {
 }
 
 // Se crea membresias
-const crearMembresias = async ({usuario_id,tipo,precio,fecha_inicio,fecha_fin,estado}) => {
-    const [result] = await db.query(`INSERT INTO membresias 
-        (usuario_id,tipo,precio,fecha_inicio,fecha_fin,estado) 
+const crearMembresias = async ({tipo,precio,fecha_inicio,fecha_fin,estado,usuario_id}) => {
+    const [result] = await connection.query(`INSERT INTO membresias 
+        (tipo,precio,fecha_inicio,fecha_fin,estado,usuario_id) 
         VALUES (?,?,?,?,?,?)`,
-        [usuario_id,tipo,precio,fecha_inicio,fecha_fin,estado]);
+        [tipo,precio,fecha_inicio,fecha_fin,estado,usuario_id]);
 
         if(result.affectedRows === 0) return null
 
         return{
             id : result.insertId,
-            usuario_id,
             tipo,
             precio,
             fecha_inicio,
             fecha_fin,
-            estado
+            estado,
+            usuario_id
         }
 }
 
 // se actualiza membresia
-const actualizarMembresias = async ({usuario_id,tipo,precio,fecha_inicio,fecha_fin,estado,id}) => {
-    const [result] = await db.query(`UPDATE membresias 
-        SET usuario_id = ?, tipo = ?,precio = ?,fecha_inicio = ?,
-        fecha_fin = ? ,estado = ? WHERE id = ? `,
-        [usuario_id,tipo,precio,fecha_inicio,fecha_fin,estado,id])
+const actualizarMembresias = async ({tipo,precio,fecha_inicio,fecha_fin,estado,usuario_id,id}) => {
+    const [result] = await connection.query(`UPDATE membresias 
+        SET  tipo = ?,precio = ?,fecha_inicio = ?,
+        fecha_fin = ? ,estado = ?,usuario_id = ? WHERE id = ? `,
+        [tipo,precio,fecha_inicio,fecha_fin,estado,usuario_id,id])
 
         if(result.affectedRows === 0) return null
 
         return {
          id,
-         usuario_id,
          tipo,
          precio,
          fecha_inicio,
          fecha_fin,
          estado,
+         usuario_id,
         }
 
 }
 
 // se elimina membresias
 const eliminarMembresia = async (id) => {
-   const [result] = await db.query(`DELETE FROM membresias WHERE id = ?`,
+   const [result] = await connection.query(`DELETE FROM membresias WHERE id = ?`,
     [id])
 
     if(result.affectedRows === 0) return null
@@ -80,9 +79,9 @@ const eliminarMembresia = async (id) => {
     return true;
 }
 
-module.exports= 
-{obtenerMembresia,
-obtenerTodosLasMembresias,
+export{
+obtenerMembresia,
+obtenerTodasLasMembresias,
 crearMembresias,
 actualizarMembresias,
 eliminarMembresia}

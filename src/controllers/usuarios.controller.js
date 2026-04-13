@@ -1,4 +1,4 @@
-const userservice = require("../services/usuarios.service")
+import * as userservice from "../services/usuarios.service.js"
 
 //obtener todos los usuarios
 const obtenerUsuarios = async(req,res) => {
@@ -114,7 +114,7 @@ catch(error) {
 }
 
 
-module.exports = {
+export  {
     eliminarUsuarios,
     actualizarUsuario,
     crearUsuario,

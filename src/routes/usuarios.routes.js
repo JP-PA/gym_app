@@ -1,23 +1,28 @@
-const express = require("express");
-const router = express.Router();
-
-const {
+import express from "express";
+import {
     obtenerUsuarios,
     obtenerUsuario,
     crearUsuario,
     actualizarUsuario,
     eliminarUsuarios,
     loginUsuario
+}
+from "../controllers/usuarios.controller.js";
+import authMiddleware  from "../middleware/auth.middleware.js";
 
-} = require("../controllers/usuarios.controller");
-const  {authMiddleware } = require("../middleware/auth.middleware");
+const router = express.Router();
 
+//Rutas protegidas
+router.get("/",authMiddleware,obtenerUsuarios);
 
-router.get("/",obtenerUsuarios,authMiddleware);
+// rutas normales
 router.get("/:id",obtenerUsuario);
 router.post("/",crearUsuario);
 router.put("/:id",actualizarUsuario);
+
+//eliminar protegido
 router.delete("/:id",eliminarUsuarios);
-router.post("/login",loginUsuario)
-;
-module.exports = router;
+
+//login
+router.post("/login",loginUsuario);
+export default router;

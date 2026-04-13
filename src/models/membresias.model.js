@@ -1,15 +1,18 @@
 // Importo la configuracion de la base de datos para empezar a hacer querys
-const db = require("../config/db.configuration").promise()
+import { Connection } from "mysql2";
+import db from "../config/db.configuration.js"
+
+const conecction = db.promise();
 
 // Se obtiene todas las membresias
 const obtenerTodosLasMembresias = async () =>{
-    const [rows]= await db.query(`SELECT * FROM membresias`)
+    const [rows]= await conecction.query(`SELECT * FROM membresias`)
     return rows
 }
 
 // se obtiene una membresia segun el nombre del usuario
 const obtenerMembresia = async (nombre) => {
-    const [rows] = await db.query(
+    const [rows] = await conecction.query(
         `SELECT 
           membresias.tipo,
           membresias.precio,

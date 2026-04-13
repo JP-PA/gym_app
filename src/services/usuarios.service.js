@@ -1,6 +1,6 @@
-const bcryptjs = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const userModel = require("../models/usuarios.model.js")
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import * as userModel from "../models/usuarios.model.js"
 
 const obtenerUsuarios = async () => {
     const usuarios = await userModel.obtenerTodosLosUsuarios();
@@ -15,7 +15,7 @@ const obtenerUsuarioporId = async (id) =>{
 const crearUsuario = async (data) => {
     const { nombre , correo , password } = data;
      
-    if(!correo.includes("@") || typeof correo !== "string"){
+    if( typeof correo !== "string" || !correo.includes("@") ){
         throw new Error("Formato de correo no valido");
         }
 
@@ -23,7 +23,7 @@ const crearUsuario = async (data) => {
         throw new Error("el nombre no es valido")
     }
 
-    if(typeof password !== "string" || password < 4 ){
+    if(typeof password !== "string" || password.length < 4 ){
         throw new Error("password minimo de 4 caracteres")
     }
 
@@ -32,13 +32,14 @@ const crearUsuario = async (data) => {
 
     const nuevoUsuario = await userModel.crearUsuarios({ 
         nombre, 
-        correo,  });
+        correo, 
+        contraseña:hashedPassword });
 
     return nuevoUsuario;
 };
 
-const loginusuario = async ({correo,password}) =>{
-    const usuario = await userModel.obtenerUsuarioporcorreo(correo)
+const loginUsuario = async ({correo,password}) =>{
+    const usuario = await userModel.obtenerUsuarioPorcorreo(correo)
 
     if(!usuario) {
         throw new Error("usuario no encotrado");
@@ -80,11 +81,11 @@ const eliminarUsuarios  = async (id) => {
     return eliminar
 }
 
-module.exports = {
+export  {
     obtenerUsuarios,
     crearUsuario,
     obtenerUsuarioporId,
     actualizarUsuarios,
     eliminarUsuarios,
-    loginusuario
+    loginUsuario
 }

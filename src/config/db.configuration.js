@@ -1,6 +1,8 @@
 // se importa el module de mysql2
-const mysql = require("mysql2");
-require("dotenv").config();
+import mysql from "mysql2";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 //conexion a base de datos mysql
 const db = mysql.createConnection({
@@ -16,6 +18,6 @@ db.connect((err)=>{
     else{console.log("conectado a mysql")}
 });
 
-module.exports = db;
+export default db;
 
 

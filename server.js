@@ -1,15 +1,13 @@
-const express = require('express');
+import express from "express";
+
+import usuarioRoutes from "./src/routes/usuarios.routes.js";
+
 const app = express();
 
 app.use(express.static("public"))
 app.use(express.json());
 
-const usuarioRoutes = require("./src/routes/usuarios.routes")
-const ProductoRoutes = require("./src/routes/productos.routes")
-const membresiaRoutes = require("./src/routes/membresias.routes")
-const ventasRoutes = require("./src/routes/ventas.routes")
-
-app.use("/usuarios",usuarioRoutes)
+app.use("/usuarios", usuarioRoutes);
 
 app.listen(3000 , () => {
     console.log("Servidor escuchando en el puerto 3000")

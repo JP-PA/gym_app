@@ -1,15 +1,14 @@
 import * as membresiaModel from "../models/membresias.model.js";
 
-// 🧠 DURACIONES EN DÍAS
+//  DURACIONES EN DÍAS
 const DURACIONES = {
-  "15_dias": 15,
-  "1_mes": 30,
-  "3_meses": 90,
-  "6_meses": 180,
-  "1_ano": 365
+  "mensual": 30,
+  "trimestral": 90,
+  "semestral": 180,
+  "anual": 365
 };
 
-// 🔥 calcular fecha fin
+// calcular fecha fin
 const calcularFechaFin = (fechaInicio, tipo) => {
   const dias = DURACIONES[tipo];
 
@@ -67,7 +66,7 @@ const obtenerMembresias = async () => {
 
 // 📌 OBTENER POR USUARIO
 const obtenerMembresiaUsuario = async (usuario_id) => {
-  return await membresiaModel.obtenerMembresiaPorUsuario(usuario_id);
+  return await membresiaModel.obtenerMembresia(usuario_id);
 };
 
 // 📌 ACTUALIZAR (recalcula todo)
@@ -93,7 +92,7 @@ const actualizarMembresia = async (id, data) => {
   });
 };
 
-// 📌 ELIMINAR
+//  ELIMINAR
 const eliminarMembresia = async (id) => {
   return await membresiaModel.eliminarMembresia(id);
 };

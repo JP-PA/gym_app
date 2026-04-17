@@ -13,7 +13,7 @@ import authMiddleware  from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 //Rutas protegidas
-router.get("/",authMiddleware,obtenerUsuarios);
+router.get("/", obtenerUsuarios);
 
 // rutas normales
 router.get("/:id",obtenerUsuario);

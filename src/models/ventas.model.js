@@ -11,11 +11,11 @@ const obtenerTodosLasVentas = async () => {
 const obtenerVenta = async (nombre) => {
     const [rows] = await db.query(`
         SELECT 
-        ventas.fecha,
-        ventas.total,
-        usuarios.nombre AS usuario_nombre 
-        FROM ventas
-        JOIN usuarios ON ventas.usuario_id = usuarios.id
+        v.fecha,
+        v.total,
+        usuarios.nombre AS nombre_usuario 
+        FROM ventas v
+        JOIN usuarios ON v.usuario_id = usuarios.id
         WHERE usuarios.nombre = ? `,
         [nombre])
 

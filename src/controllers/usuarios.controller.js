@@ -22,7 +22,7 @@ const obtenerUsuario = async(req,res) => {
        if(!usuario) 
        return res.status(404).json({mensaje : "usuario no encontrado"})
 
-       return(usuario) 
+       return res.json(usuario) 
     }
     catch(error){
        return res.status(500).json({mensaje :"error al obtener el usuario" })
@@ -60,7 +60,7 @@ const loginUsuario = async (req,res) =>{
         })
     }
 
-    const {usuario,token} = await userservice.loginusuario({correo,password})
+    const {usuario,token} = await userservice.loginUsuario({correo,password})
 
     return res.status(200).json({
         mensaje : "login exitoso",

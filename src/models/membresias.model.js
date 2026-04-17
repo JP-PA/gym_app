@@ -11,16 +11,17 @@ const obtenerTodasLasMembresias = async () =>{
 
 // se obtiene una membresia segun el nombre del usuario
 const obtenerMembresia = async (usuario_id) => {
+    console.log("usuario_id:", usuario_id)
     const [rows] = await connection.query(
         `SELECT 
-          membresias.tipo,
-          membresias.precio,
-          membresias.fecha_inicio,
-          membresias.fecha_fin,
-          membresias.estado,
+          m.tipo,
+          m.precio,
+          m.fecha_inicio,
+          m.fecha_fin,
+          m.estado,
           usuarios.nombre AS nombre_usuario
-        FROM membresias
-        JOIN usuarios ON membresias.usuario_id = usuarios.id  
+        FROM membresias m
+        JOIN usuarios ON m.usuario_id = usuarios.id  
         WHERE m.usuario_id = ? `,[usuario_id])
 
         if(rows.length === 0) return null;

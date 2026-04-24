@@ -1,9 +1,11 @@
 // Importo la configuracion de la base de datos para empezar a hacer querys
-const db = require("../config/db.configuration").promise()
+import db from "../config/db.configuration.js"
+
+const conecction = db.promise()
 
 // Se obtienen todas las ventas 
 const obtenerTodosLasVentas = async () => {
-   const [rows] = await db.query(`SELECT * FROM usuarios`)
+   const [rows] = await conecction.query(`SELECT * FROM usuarios`)
    return rows
 }
 
@@ -26,7 +28,7 @@ const obtenerVenta = async (nombre) => {
 
 // Se hace la venta
 const crearVenta = async ({fecha,total,usuario_id}) => {
-    const [result] = await db.query(`INSERT INTO ventas (fecha,total,usuario_id) VALUES (?,?,?)`,
+    const [result] = await conecction.query(`INSERT INTO ventas (fecha,total,usuario_id) VALUES (?,?,?)`,
         [fecha,total,usuario_id])
 
         if(result.affectedRows === 0) return null
@@ -44,7 +46,7 @@ const crearVenta = async ({fecha,total,usuario_id}) => {
 
 // se actualiza venta
 const actualizarVenta =  async ({id,fecha,total,usuario_id}) => {
-   const [result] = await db.query(`UPDATE FROM ventas
+   const [result] = await conecction.query(`UPDATE FROM ventas
          SET fecha = ?,total = ? ,usuario_id = ? 
          WHERE id = ? `,[id,fecha,total,usuario_id])
 
@@ -61,14 +63,13 @@ const actualizarVenta =  async ({id,fecha,total,usuario_id}) => {
 
 // se elimina venta
 const eliminarVenta = async (id) =>{
-   const [result] = await db.query(`DELETE FROM usuarios WHERE id = ?`,[id])
+   const [result] = await conecction.query(`DELETE FROM usuarios WHERE id = ?`,[id])
 
    if(result.affectedRows === 0) return null
 
    return true
 }
-
-module.exports = 
+export 
 {obtenerTodosLasVentas,
 obtenerVenta,
 crearVenta,

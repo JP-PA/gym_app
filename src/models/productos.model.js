@@ -1,15 +1,18 @@
 // Importo la configuracion de la base de datos para empezar a hacer querys
-const db = require("../config/db.configuration").promise()
+import db from "../config/db.configuration.js";
+
+
+const connection = db.promise()
 
 // Se obtiene todos los productos
 const obtenerTodosLosProductos = async () =>{
-    const [rows] = await db.query(`SELECT * FROM productos`)
+    const [rows] = await connection.query(`SELECT * FROM productos`)
     return rows
 };
 
 // se obtiene un producto segun el id
 const obtenerProducto = async (id) => {
-    const [rows] = await db.query(`SELECT * FROM productos WHERE id = ? `,[id])
+    const [rows] = await connection.query(`SELECT * FROM productos WHERE id = ? `,[id])
      
     if (rows.length === 0) return null;
 
@@ -18,7 +21,7 @@ const obtenerProducto = async (id) => {
 
 // Se crea Productos
 const crearProductos = async ({nombre,precio,stock}) => {
-    const [result] = await db.query(`INSERT INTO productos (nombre,precio,stock) VALUES (?,?,?)`,
+    const [result] = await connection.query(`INSERT INTO productos (nombre,precio,stock) VALUES (?,?,?)`,
         [nombre,precio,stock])
 
        if(result.affectedRows === 0) return null;
@@ -33,7 +36,7 @@ const crearProductos = async ({nombre,precio,stock}) => {
 
 // se actualiza Productos
 const actualizarProductos = async ({id,nombre,precio,stock}) => {
- const [result] = await db.query(`UPDATE productos 
+ const [result] = await connection.query(`UPDATE productos 
     SET nombre = ?, precio = ?,stock = ? WHERE id = ? `,
         [nombre,precio,stock,id])
         
@@ -50,7 +53,7 @@ const actualizarProductos = async ({id,nombre,precio,stock}) => {
 
 // se elimina usuarios
 const eliminarProductos = async (id) => {
-   const [result] = await db.query(`DELETE FROM productos WHERE id = ?`,
+   const [result] = await db.connection(`DELETE FROM productos WHERE id = ?`,
         [id])
 
     if (result.affectedRows === 0) return null;
@@ -58,7 +61,7 @@ const eliminarProductos = async (id) => {
     return true
 }
 
-module.exports = 
+export 
 {obtenerTodosLosProductos,
 obtenerProducto,
 crearProductos,

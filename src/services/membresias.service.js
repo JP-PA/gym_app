@@ -1,4 +1,5 @@
 import * as membresiaModel from "../models/membresias.model.js";
+import AppError from "../utils/AppError.js";
 
 //  DURACIONES EN DÍAS
 const DURACIONES = {
@@ -13,7 +14,7 @@ const calcularFechaFin = (fechaInicio, tipo) => {
   const dias = DURACIONES[tipo];
 
   if (!dias) {
-    throw new Error("Tipo de membresía no válido");
+    throw new AppError("Tipo de membresía invalida",400);
   }
 
   const fecha = new Date(fechaInicio);
@@ -34,15 +35,7 @@ const crearMembresia = async (data) => {
   const { tipo, precio, usuario_id } = data;
 
   if (!tipo || !DURACIONES[tipo]) {
-    throw new Error("Tipo de membresía inválido");
-  }
-
-  if (!usuario_id) {
-    throw new Error("Usuario requerido");
-  }
-
-  if (typeof precio !== "number") {
-    throw new Error("Precio inválido");
+    throw new AppError("Tipo de membresía inválido",400);
   }
 
   const fecha_inicio = new Date();
@@ -59,22 +52,22 @@ const crearMembresia = async (data) => {
   });
 };
 
-// 📌 OBTENER TODAS
+// OBTENER TODAS
 const obtenerMembresias = async () => {
   return await membresiaModel.obtenerTodasLasMembresias();
 };
 
-// 📌 OBTENER POR USUARIO
+//  OBTENER POR USUARIO
 const obtenerMembresiaUsuario = async (usuario_id) => {
   return await membresiaModel.obtenerMembresia(usuario_id);
 };
 
-// 📌 ACTUALIZAR (recalcula todo)
+//  ACTUALIZAR (recalcula todo)
 const actualizarMembresia = async (id, data) => {
   const { tipo, precio, usuario_id } = data;
 
   if (!DURACIONES[tipo]) {
-    throw new Error("Tipo inválido");
+    throw new AppError("Tipo inválido",400);
   }
 
   const fecha_inicio = new Date();

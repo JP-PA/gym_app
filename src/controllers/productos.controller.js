@@ -1,5 +1,7 @@
 import { json } from "express"
 import * as productoservice from "../services/productos.service.js"
+import catchAsync from "../utils/catchAsync.js"
+import AppError from "../utils/AppError.js"
 
 const obtenerTodosLosProductos = async (req,res) =>{
     try{
@@ -30,27 +32,29 @@ const obtenerProducto = async (req,res) => {
     res.status(500).json({mensaje:"error del servidor"})}
 }
 
-const crearProductos = async (req,res) => {
-    try {
+const crearProductos = catchAsync(async (req,res,next) => {
+     
         const {nombre,precio,stock} = req.body
 
         if(!nombre || precio == null || stock == null )
-            return res.status(400).json({error:"no puede quedar vacio" })
+            throw new AppError("producto incompleta",400);
 
-        const crearproducto = await productoservice.crearProductos({nombre,precio,stock})
+        const crearproducto = await productoservice.crearProductos({
+            nombre,
+            precio,
+            stock
+        });
 
-        res.status(200).json({
+        res.status(201).json({
             mensaje : "producto creado",
-            data : req.body
-        })
+            data : crearProductos
+        });
 
 
-    } catch (error) {
-        console.error("no es posible obtener los productos debido a",{error})
-        res.status(500).json({mensaje:"error en el servidor"})
-    }
+   
+    });
     
-}
+
 
 const actualizarProducto = async(req,res) => {
     try{

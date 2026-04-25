@@ -1,30 +1,30 @@
 import jwt from "jsonwebtoken";
 
-const authMiddleware = (req,res,next) => {
-    try{
+const authMiddleware = (req, res, next) => {
+    try {
         const authHeader = req.headers.authorization;
 
-        if(!authHeader) {
+        if (!authHeader) {
             return res.status(401).json({
-                error : "Token requerido"
+                error: "Token requerido"
             });
-
         }
 
         const token = authHeader.split(" ")[1];
 
-        const decoded = jwt.verify(token,"secreto_super_seguro");
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET || "dev_secret"
+        );
 
         req.user = decoded;
 
         next();
 
-    
-    }
-    catch(error){
+    } catch (error) {
         return res.status(401).json({
-            error: "token invalido"
-        })
+            error: "Token inválido"
+        });
     }
 };
 

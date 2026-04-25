@@ -1,102 +1,77 @@
 import * as userservice from "../services/usuarios.service.js"
+import catchAsync from "../utils/catchAsync.js"
+import AppError from "../utils/AppError.js"
 
 //obtener todos los usuarios
-const obtenerUsuarios = async(req,res) => {
-    try{
+const obtenerUsuarios = catchAsync(async(req,res) => {   
         const usuarios = await userservice.obtenerUsuarios();
         res.json(usuarios)
-    }
-    catch (error){
-        res.status(500).json({mensaje : "Error al obtener usuarios"})
-
-    }
-};
+});
 
 // obtener usuarios segun el id
-const obtenerUsuario = async(req,res) => {
-    try{
+const obtenerUsuario = catchAsync(async(req,res) => {
+   
        const {id} = req.params;
     
        const usuario = await userservice.obtenerUsuarioporId(id)
 
        if(!usuario) 
-       return res.status(404).json({mensaje : "usuario no encontrado"})
+       throw new AppError("Usuario no encontrado",404)
 
        return res.json(usuario) 
-    }
-    catch(error){
-       return res.status(500).json({mensaje :"error al obtener el usuario" })
-    }
-}
+    
+})
 
 // crear usuario
-const crearUsuario = async (req,res) => {
-    try{
+const crearUsuario = catchAsync(async (req,res) => {
         const{nombre,correo,password} = req.body
-
-        if(!nombre || !correo || !password) 
-        return res.status(404).
-        json({
-            mensaje:"completar todos los datos"
-        })
 
         const nuevoUsuario = await userservice.crearUsuario(req.body)
 
-        res.status(201).json(nuevoUsuario)
-    }
-    catch(error){
-        res.status(500).json({mensaje: "error al crear usuario"})
-    }
-}
+        res.status(201).json({
+            mensaje:"Usuario creado exitosamente",
+            data:nuevoUsuario})
+    })
 
 // login de usuario
-const loginUsuario = async (req,res) =>{
-    try{
-    const {correo,password} = req.body;
+const loginUsuario = catchAsync(async (req, res) => {
 
-    if(!correo || !password){
-        return res.status(400).json({
-            error : "correo y contraseña obligatorios"
-        })
-    }
+    const { correo, password } = req.body;
 
-    const {usuario,token} = await userservice.loginUsuario({correo,password})
+    const { usuario, token } = await userservice.loginUsuario({ correo, password });
 
-    return res.status(200).json({
-        mensaje : "login exitoso",
+    const { password: _, ...userSafe } = usuario;
+
+    res.json({
+        status: "sucess",
+        mensaje: "Login exitoso",
         token,
-        usuario
-    })
-}
-
-catch(error){
-    return res.status(500).json({
-        error : "no autorizado"
-    })
-}
-}
+        usuario: userSafe
+    });
+});
 
 // actualizar usuario 
 
-const actualizarUsuario = async (req,res) => {
-    try{
-        const {id} = req.params
-       const actualizar = await userservice.actualizarUsuarios(id,req.body);
+const actualizarUsuario = catchAsync(async (req,res) => {
+       const{nombre,correo,password} = req.body
+       const {id} = req.params
+       const actualizar = await userservice.actualizarUsuarios({id,nombre,correo,password});
 
-       if(!actualizar) 
-        return res.status(404).json({mensaje:"usuario no encontrado"})
+       if(!id) 
+        throw new AppError("usuario no encontrado",404)
 
-       return res.status(200)
-    }
-    catch(error){
-        res.status(500).json({mensaje:"error al actualizar el usuario"})
-    }
-}
+       return res.status(201).json({
+        mensaje : "usuario actualizado",
+        data:actualizar
+       })
+    
+
+})
 
 // eliminar usuario
 
-const eliminarUsuarios = async(req,res) =>{
-    try{
+const eliminarUsuarios = catchAsync(async(req,res) =>{
+    
         const {id} = req.params
         
         const eliminar = await userservice.eliminarUsuarios(id);
@@ -105,13 +80,8 @@ const eliminarUsuarios = async(req,res) =>{
             return res.status(404).json({error : "usuario no encontrado"})
 
         return res.status(200).json({mensaje: "usuario eliminado"})
-}
 
-catch(error) {
-    res.status(500).json({menaje : "error en eliminar este usuario"})
-}
-
-}
+})
 
 
 export  {

@@ -1,11 +1,13 @@
-const db = require('../config/db.configuration').promise()
+import db from "../config/db.configuration.js"
+
+const connection = db.promise()
 
 const obtenerTodosLosDetalles = async() => {
-    const [rows] = await db.query(`SELECT * FROM detalle_ventas`)
+    const [rows] = await connection.query(`SELECT * FROM detalle_ventas`)
     return rows
 }
 const obtenerDetalleProducto = async(nombre) =>{
-    const[rows] = await db.query(
+    const[rows] = await connection.query(
         `SELECT
         detalle_ventas.cantidad,
         detalle_ventas.subtotal,
@@ -26,7 +28,7 @@ const obtenerDetalleProducto = async(nombre) =>{
 } 
 
 const crearDetalleVenta = async ({venta_id,producto_id,cantidad,subtotal}) => {
-    const [result] = await db.query(`
+    const [result] = await connection.query(`
         INSERT INTO detalle_ventas(venta_id,producto_id,cantidad,subtotal) 
         VALUES (?,?,?,?)`[venta_id,producto_id,cantidad,subtotal])
 
@@ -42,7 +44,7 @@ const crearDetalleVenta = async ({venta_id,producto_id,cantidad,subtotal}) => {
 }
 
 const actualizarDetalleVenta = async({id,venta_id,producto_id,cantidad,subtotal}) => {
-    const [result] = await db.query(
+    const [result] = await connection.query(
         `UPDATE detalle_ventas 
         SET venta_id = ?,
         producto_id = ?,
@@ -63,14 +65,14 @@ const actualizarDetalleVenta = async({id,venta_id,producto_id,cantidad,subtotal}
 }
 
 const eliminarDetalleVenta = async (id) => {
-    const[result] = await db.query(`DELETE FROM detalle_ventas WHERE id = ?`,[id])
+    const[result] = await connection.query(`DELETE FROM detalle_ventas WHERE id = ?`,[id])
 
     if(result.affectedRows === 0) return null
 
     return true
 }
 
-module.exports = {
+export {
     obtenerDetalleProducto,
     obtenerTodosLosDetalles,
     crearDetalleVenta,

@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as userModel from "../models/usuarios.model.js"
+import AppError from "../utils/AppError.js";
 
 const obtenerUsuarios = async () => {
     const usuarios = await userModel.obtenerTodosLosUsuarios();
@@ -14,58 +15,70 @@ const obtenerUsuarioporId = async (id) =>{
 
 const crearUsuario = async (data) => {
     const { nombre , correo , password } = data;
+
+    const existente = await userModel.obtenerUsuarioPorcorreo(correo);
+    if (existente) {
+        throw new AppError("El correo ya está registrado", 400);}
      
-    if( typeof correo !== "string" || !correo.includes("@") ){
-        throw new Error("Formato de correo no valido");
+    const crearUsuario = async (data) => {
+    const { nombre, correo, password } = data;
+
+    // 🔍 Validación previa (rápida)
+    const existente = await userModel.obtenerUsuarioPorcorreo(correo);
+    if (existente) {
+        throw new AppError("El correo ya está registrado", 400);
+    }
+
+    try {
+        const hashedPassword = await bcryptjs.hash(password, 10);
+
+        const nuevoUsuario = await userModel.crearUsuarios({
+            nombre,
+            correo,
+            password: hashedPassword
+        });
+
+        return nuevoUsuario;
+
+    } catch (error) {
+
+        // Error real de MySQL
+        if (error.code === "ER_DUP_ENTRY") {
+            throw new AppError("El correo ya está registrado", 400);
         }
 
-    if(typeof nombre !== "string" || nombre.trim() === "" ){
-        throw new Error("el nombre no es valido")
+        throw error;
     }
-
-    if(typeof password !== "string" || password.length < 4 ){
-        throw new Error("password minimo de 4 caracteres")
-    }
-
-    const hashedPassword = await bcryptjs.hash(password, 10);
-    
-
-    const nuevoUsuario = await userModel.crearUsuarios({ 
-        nombre, 
-        correo, 
-        contraseña:hashedPassword });
-
-    return nuevoUsuario;
+};
 };
 
-const loginUsuario = async ({correo,password}) =>{
-    const usuario = await userModel.obtenerUsuarioPorcorreo(correo)
 
-    if(!usuario) {
-        throw new Error("usuario no encotrado");
+const loginUsuario = async ({ correo, password }) => {
+
+    const usuario = await userModel.obtenerUsuarioPorcorreo(correo);
+
+    if (!usuario) {
+        throw new AppError("Usuario no encontrado", 404);
     }
 
     const esValido = await bcryptjs.compare(password, usuario.password);
 
-    if (!esValido){
-        throw new Error("Contraseña incorrecta")
+    if (!esValido) {
+        throw new AppError("Contraseña incorrecta", 401);
     }
 
     const token = jwt.sign(
         {
             id: usuario.id,
-            correo: usuario.correo,
-            role: usuario.role
+            correo: usuario.correo
         },
-        "secreto_super_seguro",
-        {expiresIn: "1h"}
+        process.env.JWT_SECRET || "dev_secret", // 👈 usa .env en producción
+        { expiresIn: "1h" }
     );
 
-    return{
-        usuario,
-        token 
-    };
+    return { usuario, token };
 };
+
 
 const actualizarUsuarios = async (id,data) => {
     const {nombre , correo, password} = data;

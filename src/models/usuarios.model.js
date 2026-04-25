@@ -69,6 +69,8 @@ const eliminarUsuarios = async (id) =>{
     return true;
 }
 
+
+
 export {
 obtenerTodosLosUsuarios,
 obtenerUsuario,

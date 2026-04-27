@@ -5,7 +5,14 @@ const connection = db.promise();
 
 // Se obtiene todas las membresias
 const obtenerTodasLasMembresias = async () =>{
-    const [rows]= await connection.query(`SELECT * FROM membresias`)
+    const [rows]= await connection.query(`SELECT 
+    m.id,
+    m.tipo,
+    m.precio,
+    m.estado,
+    u.nombre AS usuario_nombre
+FROM membresias m
+JOIN usuarios u ON m.usuario_id = u.id;`)
     return rows
 }
 

@@ -20,15 +20,6 @@ const crearUsuario = async (data) => {
     if (existente) {
         throw new AppError("El correo ya está registrado", 400);}
      
-    const crearUsuario = async (data) => {
-    const { nombre, correo, password } = data;
-
-    // 🔍 Validación previa (rápida)
-    const existente = await userModel.obtenerUsuarioPorcorreo(correo);
-    if (existente) {
-        throw new AppError("El correo ya está registrado", 400);
-    }
-
     try {
         const hashedPassword = await bcryptjs.hash(password, 10);
 
@@ -50,7 +41,7 @@ const crearUsuario = async (data) => {
         throw error;
     }
 };
-};
+
 
 
 const loginUsuario = async ({ correo, password }) => {
@@ -70,9 +61,10 @@ const loginUsuario = async ({ correo, password }) => {
     const token = jwt.sign(
         {
             id: usuario.id,
-            correo: usuario.correo
+            correo: usuario.correo,
+            role: usuario.role
         },
-        process.env.JWT_SECRET || "dev_secret", // 👈 usa .env en producción
+        process.env.JWT_SECRET || "dev_secret", // 
         { expiresIn: "1h" }
     );
 

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Auth</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="card">
+
+    <div class="tabs">
+      <button id="loginTab" class="active">Login</button>
+      <button id="registerTab">Registro</button>
+    </div>
+
+    <!-- LOGIN -->
+    <form id="loginForm" class="form active">
+      <input type="email" id="correo" placeholder="Correo" required />
+      <input type="password" id="password" placeholder="Contraseña" required />
+      <button type="submit">Ingresar</button>
+    </form>
+
+    <!-- REGISTER -->
+    <form id="registerForm" class="form">
+      <input type="text" id="nombre" placeholder="Nombre" />
+      <input type="email" id="correoReg" placeholder="Correo" />
+      <input type="password" id="passwordReg" placeholder="Contraseña" />
+      <button type="submit">Registrarse</button>
+    </form>
+
+    <p id="mensaje"></p>
+
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

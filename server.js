@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors"
 import usuarioRoutes from "./src/routes/usuarios.routes.js";
 import membresiaRoutes from "./src/routes/membresias.routes.js"
 import productosRoutes from "./src/routes/productos.routes.js"
@@ -6,7 +7,9 @@ import errorHandler  from "./src/middleware/errorHandler.js";
 
 const app = express();
 
+app.use(cors())
 app.use(express.json());
+
 
 app.use("/usuarios", usuarioRoutes);
 app.use("/membresias",membresiaRoutes);

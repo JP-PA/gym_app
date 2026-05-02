@@ -16,9 +16,9 @@ const crearMembresia = catchAsync(async(req,res,next) =>{
 
 const consultarMembresiaid = catchAsync(async (req,res) => {
     
-    const {usuario_id} = req.params
+    const {id} = req.params
     
-    const consultarid = await membresiaservicer.obtenerMembresiaUsuario(usuario_id)  
+    const consultarid = await membresiaservicer.obtenerMembresiaUsuario(id)  
 
     if (!consultarid ) return res.status(404).json({error : 
         "membresia no encontrada"
@@ -36,6 +36,8 @@ const consultarMembresias = catchAsync (async (req,res) => {
         res.json(consultar)
     
 })
+
+
 
 const actualizarMembresia = catchAsync(async(req,res) =>{
    

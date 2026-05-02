@@ -31,9 +31,8 @@ export const cargarMembresias = async () => {
                             <td>${m.estado}</td>
                             <td>${m.usuario_nombre}</td>
                             <td>
-                <button onclick="editarProducto(${m.id})">Editar</button>
-                <button class="delete" onclick="eliminarProducto(${m.id})">Eliminar</button>
-            </td>
+                <button onclick="editarMembresia(${m.id})">Editar</button>
+<button class="delete" onclick="eliminarMembresia(${m.id})">Eliminar</button>
                         </tr>
                         
                     `).join("")}

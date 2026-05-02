@@ -37,6 +37,6 @@ export const cargarUsuarios = async () => {
             </table>
         `;
     } catch (error) {
-        contenedor.innerHTML = "Error al cargar membresías";
+        contenedor.innerHTML = "Error al cargar Usuarios";
     }
 };

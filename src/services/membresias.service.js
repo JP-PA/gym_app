@@ -23,12 +23,6 @@ const calcularFechaFin = (fechaInicio, tipo) => {
   return fecha;
 };
 
-// calcular estado
-const calcularEstado = (fechaFin) => {
-  const hoy = new Date();
-
-  return new Date(fechaFin) >= hoy ? "activa" : "vencida";
-};
 
 //  CREAR MEMBRESÍA
 const crearMembresia = async (data) => {
@@ -40,14 +34,13 @@ const crearMembresia = async (data) => {
 
   const fecha_inicio = new Date();
   const fecha_fin = calcularFechaFin(fecha_inicio, tipo);
-  const estado = calcularEstado(fecha_fin);
+
 
   return await membresiaModel.crearMembresias({
     tipo,
     precio,
     fecha_inicio,
     fecha_fin,
-    estado,
     usuario_id
   });
 };
@@ -58,8 +51,8 @@ const obtenerMembresias = async () => {
 };
 
 //  OBTENER POR USUARIO
-const obtenerMembresiaUsuario = async (usuario_id) => {
-  return await membresiaModel.obtenerMembresia(usuario_id);
+const obtenerMembresiaUsuario = async (id) => {
+  return await membresiaModel.obtenerMembresia(id);
 };
 
 //  ACTUALIZAR (recalcula todo)
@@ -80,7 +73,6 @@ const actualizarMembresia = async (id, data) => {
     precio,
     fecha_inicio,
     fecha_fin,
-    estado,
     usuario_id
   });
 };

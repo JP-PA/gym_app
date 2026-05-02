@@ -20,11 +20,11 @@ window.mostrarSeccion = async (seccion) => {
         await cargarProductos();
     }
     if (seccion === "usuarios") {
-        console.log("CARGANDO PRODUCTOS");
+        console.log("CARGANDO USUARIOS");
         await cargarUsuarios();
     }
     if (seccion === "ventas") {
-        console.log("CARGANDO PRODUCTOS");
+        console.log("CARGANDO VENTAS");
         await cargarVentas();
     }
 
@@ -38,26 +38,76 @@ window.mostrarSeccion = async (seccion) => {
         await cargarAdmin();
     }
 };
-window.eliminarProducto = async (id) => {
-    const confirmar = confirm("¿Eliminar producto?");
+window.eliminarMembresia = async (id) => {
+    const confirmar = confirm("¿Eliminar membresía?");
     if (!confirmar) return;
 
     try {
-        await apiFetch(`/productos/${id}`, {
+        await apiFetch(`/membresias/${id}`, {
             method: "DELETE"
         });
 
-        alert("Producto eliminado");
-
-        mostrarSeccion("productos"); // recarga
+        mostrarSeccion("membresias");
     } catch (error) {
         alert("Error al eliminar");
     }
 };
 
 
-window.editarProducto = (id) => {
-    alert("Aquí abrirás modal de edición: " + id);
+window.editarMembresia = async (id) => {
+
+    
+    const data = await apiFetch(`/membresias/${id}`);
+    const m = data.membresia || data;
+
+    const usuariosData = await apiFetch("/usuarios");
+    const usuarios = usuariosData.usuarios || usuariosData;
+
+    // 🔥 3. opciones usuario (seleccionado)
+    const opcionesUsuarios = usuarios.map(u => `
+        <option value="${u.id}" ${u.id === m.usuario_id ? "selected" : ""}>
+            ${u.nombre}
+        </option>
+    `).join("");
+
+    // 🔥 4. tipos
+    const tipos = ["mensual", "trimestral", "semestral", "anual"];
+
+    const opcionesTipos = tipos.map(t => `
+        <option value="${t}" ${t === m.tipo ? "selected" : ""}>
+            ${t}
+        </option>
+    `).join("");
+
+    // 🔥 5. abrir modal con datos
+    abrirModal("Editar Membresía", `
+        <div class="form-group">
+            <label>Tipo</label>
+            <select name="tipo">${opcionesTipos}</select>
+        </div>
+
+        <div class="form-group">
+            <label>Precio</label>
+            <input name="precio" type="number" value="${m.precio}" required />
+        </div>
+
+        <div class="form-group">
+            <label>Usuario</label>
+            <select name="usuario_id">${opcionesUsuarios}</select>
+        </div>
+    `,
+    async (formData) => {
+
+        const data = Object.fromEntries(formData.entries());
+
+        await apiFetch(`/membresias/${id}`, {
+            method: "PUT",
+            body: JSON.stringify(data)
+        });
+
+        cerrarModal();
+        mostrarSeccion("membresias");
+    });
 };
 
 window.abrirModal = (titulo, html, onSubmit) => {

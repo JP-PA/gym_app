@@ -31,7 +31,7 @@ const crearProductos = async (data) =>{
   if (stock < 0){
     throw new Error ("El stock no es valido");
   }
-  return await modelproductos.crearProductos({
+  return await modelproductos.crearProducto({
         nombre,precio,stock
     })
 }

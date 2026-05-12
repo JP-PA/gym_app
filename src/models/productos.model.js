@@ -6,13 +6,19 @@ const connection = db.promise()
 
 // Se obtiene todos los productos
 const obtenerTodosLosProductos = async () =>{
-    const [rows] = await connection.query(`SELECT * FROM productos`)
+
+    const [rows] = await connection.query(`
+        SELECT * FROM productos
+        `)
+
     return rows
 };
 
 // se obtiene un producto segun el id
-const obtenerProducto = async (id) => {
-    const [rows] = await connection.query(`SELECT * FROM productos WHERE id = ? `,[id])
+const obtenerProductoPorId = async (id) => {
+
+    const [rows] = await connection.query(`SELECT * FROM productos 
+        WHERE id = ? `,[id])
      
     if (rows.length === 0) return null;
 
@@ -20,8 +26,9 @@ const obtenerProducto = async (id) => {
 }
 
 // Se crea Productos
-const crearProductos = async ({nombre,precio,stock}) => {
-    const [result] = await connection.query(`INSERT INTO productos (nombre,precio,stock) VALUES (?,?,?)`,
+const crearProducto = async ({nombre,precio,stock}) => {
+    const [result] = await connection.query(`INSERT INTO productos (nombre,precio,stock) 
+        VALUES (?,?,?)`,
         [nombre,precio,stock])
 
        if(result.affectedRows === 0) return null;
@@ -35,10 +42,12 @@ const crearProductos = async ({nombre,precio,stock}) => {
 }
 
 // se actualiza Productos
-const actualizarProductos = async ({id,nombre,precio,stock}) => {
- const [result] = await connection.query(`UPDATE productos 
-    SET nombre = ?, precio = ?,stock = ? WHERE id = ? `,
-        [nombre,precio,stock,id])
+const actualizarProducto = async ({id,nombre,precio,stock}) => {
+ const [result] = await connection.query(`
+    UPDATE productos 
+    SET nombre = ?, precio = ?,stock = ? 
+    WHERE id = ? `,
+    [id,nombre,precio,stock])
         
     if(result.affectedRows === 0) return null  
 
@@ -51,9 +60,9 @@ const actualizarProductos = async ({id,nombre,precio,stock}) => {
 
 }
 
-// se elimina usuarios
-const eliminarProductos = async (id) => {
-   const [result] = await db.connection(`DELETE FROM productos WHERE id = ?`,
+//Eliminar productos
+const eliminarProducto = async (id) => {
+   const [result] = await connection.query(`DELETE FROM productos WHERE id = ?`,
         [id])
 
     if (result.affectedRows === 0) return null;
@@ -61,10 +70,29 @@ const eliminarProductos = async (id) => {
     return true
 }
 
+//Actualizar stock (PARA TRANSACCIONES)
+
+const actualizarStockProducto = async (
+
+    connectionDB,
+    {
+        cantidad,
+        producto_id
+      }
+) => {
+    await connectionDB.query(`
+    UPDATE productos 
+    SET Stock = stock - ? 
+    WHERE id = ? 
+    `,[cantidad,producto_id])
+}
+
 export 
 {obtenerTodosLosProductos,
-obtenerProducto,
-crearProductos,
-actualizarProductos,
-eliminarProductos}
+obtenerProductoPorId,
+crearProducto,
+actualizarProducto,
+eliminarProducto,
+actualizarStockProducto
+}
 

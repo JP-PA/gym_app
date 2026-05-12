@@ -1,60 +1,67 @@
 // Importo la configuracion de la base de datos para empezar a hacer querys
 import db from "../config/db.configuration.js"
 
-const conecction = db.promise()
+const Connection = db.promise()
 
 // Se obtienen todas las ventas 
 const obtenerTodosLasVentas = async () => {
-   const [rows] = await conecction.query(`SELECT * FROM usuarios`)
-   return rows
-}
-
-// se obtiene venta segun nombre de usuario
-const obtenerVenta = async (nombre) => {
-    const [rows] = await db.query(`
-        SELECT 
+   const [rows] = await Connection.query(`
+      SELECT
+        v.id, 
         v.fecha,
         v.total,
         usuarios.nombre AS nombre_usuario 
         FROM ventas v
-        JOIN usuarios ON v.usuario_id = usuarios.id
-        WHERE usuarios.nombre = ? `,
-        [nombre])
+        JOIN usuarios ON v.usuario_id = u.id
+      `)
+   return rows
+}
+
+// se obtiene ventas por id
+const obtenerVenta = async (id) => {
+    const [rows] = await Connection.query(`
+        SELECT
+        v.id, 
+        v.fecha,
+        v.total,
+        usuarios.nombre AS nombre_usuario 
+        FROM ventas v
+        JOIN usuarios ON v.usuario_id = u.id
+        WHERE v.id = ? `,
+        [id])
 
      if(rows.length === 0) return null;
      
      return rows[0];
 }
 
-// Se hace la venta
-const crearVenta = async ({fecha,total,usuario_id}) => {
-    const [result] = await conecction.query(`INSERT INTO ventas (fecha,total,usuario_id) VALUES (?,?,?)`,
-        [fecha,total,usuario_id])
+// Se inserta la venta 
+const crearVenta = async (ConnectionDB,{total,usuario_id}) => {
 
-        if(result.affectedRows === 0) return null
+    const [result] = await ConnectionDB.query(`
+      INSERT INTO ventas (fecha,total,usuario_id) 
+      VALUES (NOW(),?,?)`,
+        [total,usuario_id])
 
         return {
            id : result.insertId,
-           fecha,
            total,
            usuario_id
         }
-
-
-
 }
 
 // se actualiza venta
-const actualizarVenta =  async ({id,fecha,total,usuario_id}) => {
-   const [result] = await conecction.query(`UPDATE FROM ventas
-         SET fecha = ?,total = ? ,usuario_id = ? 
-         WHERE id = ? `,[id,fecha,total,usuario_id])
+const actualizarVenta =  async ({id,total,usuario_id}) => {
+   const [result] = await conecction.query(`
+      UPDATE ventas
+      SET total = ? ,usuario_id = ? 
+      WHERE id = ? `
+      ,[id,total,usuario_id])
 
          if(result.affectedRows === 0) return null;
 
          return{
             id,
-            fecha,
             total,
             usuario_id
          }
@@ -63,16 +70,22 @@ const actualizarVenta =  async ({id,fecha,total,usuario_id}) => {
 
 // se elimina venta
 const eliminarVenta = async (id) =>{
-   const [result] = await conecction.query(`DELETE FROM usuarios WHERE id = ?`,[id])
+
+   const [result] = await conecction.query(`
+      DELETE FROM ventas 
+      WHERE id = ?`
+      ,[id])
 
    if(result.affectedRows === 0) return null
 
    return true
 }
-export 
-{obtenerTodosLasVentas,
+
+export {
+obtenerTodosLasVentas,
 obtenerVenta,
 crearVenta,
 actualizarVenta,
-eliminarVenta}
+eliminarVenta
+}
 

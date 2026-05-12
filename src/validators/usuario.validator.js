@@ -2,13 +2,13 @@ import Joi from "joi";
 
 export const crearUsuarioSchema = Joi.object({
     nombre: Joi.string().min(4).required().trim().pattern(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/).messages({
-         "string.empty": "El nombre no puede estar vacío",
-            "string.min": "El nombre no puede ser tan corto",
-            "string.pattern.base": "El nombre solo puede contener letras y espacios",
-            "any.required": "El nombre es obligatorio"
+    "string.empty": "El nombre no puede estar vacío",
+    "string.min": "El nombre no puede ser tan corto",
+    "string.pattern.base": "El nombre solo puede contener letras y espacios",
+    "any.required": "El nombre es obligatorio"
     }),
     correo: Joi.string().email({ tlds: { allow: false } }).required().messages({
-     "string.email": "Correo inválido",
+    "string.email": "Correo inválido",
     "any.required": "El correo es obligatorio"
     }),
     password : Joi.string().min(8).max(40).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/).required().messages({

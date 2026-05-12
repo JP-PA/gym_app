@@ -10,7 +10,7 @@ import authMiddleware  from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 
-router.get("/" ,authMiddleware,obtenerUsuarios);
+router.get("/" ,obtenerUsuarios);
 router.get("/:id",validateParams(idSchema),obtenerUsuario);
 router.post("/",validate(crearUsuarioSchema),crearUsuario);
 router.put("/:id",validate(actualizarUsuarioSchema),actualizarUsuario);

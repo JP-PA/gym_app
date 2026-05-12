@@ -2,80 +2,61 @@ import db from "../config/db.configuration.js"
 
 const connection = db.promise()
 
-const obtenerTodosLosDetalles = async() => {
-    const [rows] = await connection.query(`SELECT * FROM detalle_ventas`)
+//obtener detalles de una venta
+const obtenerDetallesPorventa = async(venta_id) => {
+
+    const [rows] = await connection.query(`
+    SELECT
+        dv.id,
+        p.nombre AS productos,
+        dv.cantidad,
+        dv.valor_unitario,
+        dv.subtotal
+    FROM detalle_ventas dv
+    JOIN productos p ON dv.producto_id = p.id
+    WHERE dv.venta_id = ?
+        `,[venta_id])
+
     return rows
 }
-const obtenerDetalleProducto = async(nombre) =>{
-    const[rows] = await connection.query(
-        `SELECT
-        detalle_ventas.cantidad,
-        detalle_ventas.subtotal,
-        productos.nombre AS nombre_producto,
-        productos.precio AS precio_producto,
-        ventas.fecha AS fecha_venta,
-        ventas.total AS total_venta
-        FROM detalle_ventas
-        JOIN productos ON detalle_ventas.producto_id = productos.id
-        JOIN ventas ON detalle_ventas.venta_id = ventas.id
-        WHERE productos.nombre = ?`,[nombre])
 
-        if(rows.length === 0) return null
 
-        return rows[0]
-
-        
-} 
-
-const crearDetalleVenta = async ({venta_id,producto_id,cantidad,subtotal}) => {
-    const [result] = await connection.query(`
-        INSERT INTO detalle_ventas(venta_id,producto_id,cantidad,subtotal) 
-        VALUES (?,?,?,?)`[venta_id,producto_id,cantidad,subtotal])
-
-        if(result.affectedRows === 0) return null
+const crearDetalleVenta = async (connectionDB,
+    {
+      venta_id,
+      producto_id,
+      cantidad,
+      valor_unitario,
+      subtotal}) => {
+        const [result] = await connectionDB.query(`
+        INSERT INTO detalle_ventas
+        (
+          venta_id,
+          producto_id,
+          cantidad,
+          valor_unitario,
+          subtotal
+          ) 
+        VALUES (?,?,?,?,?)`
+        ,[
+            venta_id,
+            producto_id,
+            cantidad,
+            valor_unitario,
+            subtotal])
 
         return {
             id : result.insertId,
             venta_id,
-            producto,
+            producto_id,
             cantidad,
+            valor_unitario,
             subtotal
         }
 }
 
-const actualizarDetalleVenta = async({id,venta_id,producto_id,cantidad,subtotal}) => {
-    const [result] = await connection.query(
-        `UPDATE detalle_ventas 
-        SET venta_id = ?,
-        producto_id = ?,
-        cantidad = ?,
-        subtotal=?
-        WHERE id = ? `
-     [id,venta_id,producto_id,cantidad,subtotal])
-
-     if(result.affectedRows === 0) return null
-
-     return{
-        id,
-        venta_id,
-        producto_id,
-        cantidad,
-        subtotal
-     }
-}
-
-const eliminarDetalleVenta = async (id) => {
-    const[result] = await connection.query(`DELETE FROM detalle_ventas WHERE id = ?`,[id])
-
-    if(result.affectedRows === 0) return null
-
-    return true
-}
 
 export {
-    obtenerDetalleProducto,
-    obtenerTodosLosDetalles,
-    crearDetalleVenta,
-    actualizarDetalleVenta,
-    eliminarDetalleVenta
+    obtenerDetallesPorventa,
+    crearDetalleVenta
 }

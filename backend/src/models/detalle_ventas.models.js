@@ -2,7 +2,7 @@ import db from "../config/db.configuration.js"
 
 const connection = db.promise()
 
-//obtener detalles de una venta
+//Get all details of all sells
 const obtenerDetallesPorventa = async(venta_id) => {
 
     const [rows] = await connection.query(`

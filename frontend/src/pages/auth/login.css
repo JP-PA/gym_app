@@ -1,20 +1,18 @@
 .Login-container{
-  display:flex;
-  flex-direction: column;
-  justify-content: center;
-  gap:15px;
-  position: center;
-  align-items: center;
   width:300px;
-  height:250px;
-  margin:150px auto;
-  border-color: black;
-  border-style: inset;
-  border-radius: 10%;
+  margin:100px auto;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  padding:30px;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
 input{
-    border-radius: 10;
-    align-items: center;
+padding: 10px;
+border-radius: 6px;
+border: 1px solid gray;
     
 }

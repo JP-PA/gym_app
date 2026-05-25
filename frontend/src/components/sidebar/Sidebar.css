@@ -1,0 +1,83 @@
+.sidebar{
+
+    width:80px;
+    height:100vh;
+
+    background:orange;
+    color:white;
+
+    padding:20px 10px;
+
+    transition:0.3s;
+
+    overflow:hidden;
+}
+
+/* EXPAND ON HOVER */
+
+.sidebar:hover{
+    width:220px;
+}
+
+/* LOGO */
+
+.logo{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+/* MENU */
+
+.sidebar ul{
+    list-style:none;
+}
+
+/* ITEMS */
+
+.sidebar li{
+
+    display:flex;
+    align-items:center;
+
+    gap:15px;
+
+    padding:15px 10px;
+
+    cursor:pointer;
+
+    border-radius:8px;
+
+    transition:0.2s;
+    
+}
+
+/* HOVER EFFECT */
+
+.sidebar li:hover{
+    background:#374151;
+}
+
+/* ICONS */
+
+.sidebar svg{
+    font-size:20px;
+    min-width:20px;
+}
+
+/* TEXT */
+
+.sidebar span{
+
+    opacity:0;
+
+    transition:0.2s;
+
+    white-space:nowrap;
+}
+
+/* SHOW TEXT WHEN HOVER */
+
+.sidebar:hover span{
+    opacity:1;
+}
+

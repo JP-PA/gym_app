@@ -31,3 +31,18 @@ border: 1px solid gray;
     background:#f8d7da;
     color:#721c24;
 }
+.layout{
+    display:flex;
+}
+
+.main-content{
+    flex:1;
+
+    background:#f3f4f6;
+
+    min-height:100vh;
+}
+
+.page-content{
+    padding:20px;
+}

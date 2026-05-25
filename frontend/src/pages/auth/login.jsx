@@ -2,6 +2,7 @@ import { useState } from "react";
 import { loginUser } from "../../services/auth.service.js";
 import { RegisterUser } from "../../services/registre.service.js";
 import "./login.css";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button.jsx";
 
 function Login() {
@@ -20,6 +21,7 @@ function Login() {
 
     const [messageType, setMessageType] = useState("");
 
+    const navigate = useNavigate();
     const handleLogin = async () => {
 
         try {
@@ -30,10 +32,12 @@ function Login() {
             });
 
             localStorage.setItem("token", data.token)
+
             setMessage("Login successful");
             setMessageType("success");
-            console.log(data);
+            
 
+            navigate("/dashboard");
         } catch (error) {
 
             setMessage(

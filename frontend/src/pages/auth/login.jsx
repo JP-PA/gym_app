@@ -3,7 +3,7 @@ import { loginUser } from "../../services/auth.service.js";
 import { RegisterUser } from "../../services/registre.service.js";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
-import Button from "../../components/Button.jsx";
+import Button from "../../components/button/Button.jsx";
 
 function Login() {
 

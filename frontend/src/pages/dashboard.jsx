@@ -1,5 +1,5 @@
 import DashboardLayout from ".././layouts/dashboardlayout";
-import Card from "../components/Card.jsx"
+import Card from "../components/card/Card.jsx"
 
 function Dashboard() {
 

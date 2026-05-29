@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 
 import DashboardLayout from "../layouts/dashboardlayout";
 
-import { GetMemberships} from "../services/memberships.service";
+import { GetMemberships } from "../services/memberships.service";
 
 import "./memberships.css"
 
@@ -18,7 +19,7 @@ function Memberships() {
 
                 const data = await GetMemberships();
 
-                
+
 
                 setMemberships(data);
 
@@ -39,59 +40,81 @@ function Memberships() {
 
         <DashboardLayout>
 
-            <h1><strong>Membresias</strong></h1>
+            <div className="header-container">
+                <h1>Membresias</h1>
 
-            
-              <table className="memberships-table">
+                <button className="add-btn">
+                    + Nuevo Membresia
+                </button>
+            </div>
 
-    <thead>
 
-        <tr>
 
-            <th>ID</th>
+            <table className="memberships-table">
 
-            <th>Usuario</th>
+                <thead>
 
-            <th>tipo</th>
+                    <tr>
 
-            <th>Fecha_inicio</th>
+                        <th>ID</th>
 
-            <th>Fecha_fin</th>
+                        <th>Usuario</th>
 
-            <th>Estado</th>
+                        <th>tipo</th>
 
-        </tr>
+                        <th>Fecha_inicio</th>
 
-    </thead>
+                        <th>Fecha_fin</th>
 
-    <tbody>
+                        <th>Estado</th>
 
-        {
-            memberships.map((membresias) => (
+                        <th>Acciones</th>
 
-                <tr key={membresias.id}>
+                    </tr>
 
-                    <td>{membresias.id}</td>
+                </thead>
 
-                    <td>{membresias.usuario_nombre}</td>
+                <tbody>
 
-                    <td>{membresias.tipo}</td>
+                    {
+                        memberships.map((membresias) => (
 
-                    <td>{membresias.fecha_inicio}</td>
+                            <tr key={membresias.id}>
 
-                    <td>{membresias.fecha_fin}</td>
+                                <td>{membresias.id}</td>
 
-                    <td>{membresias.estado}</td>
+                                <td>{membresias.usuario_nombre}</td>
 
-                </tr>
+                                <td>{membresias.tipo}</td>
 
-            ))
-        }
+                                <td>{new Date(membresias.fecha_inicio).toLocaleDateString()}</td>
 
-    </tbody>
+                                <td>{new Date(membresias.fecha_fin).toLocaleDateString()}</td>
 
-</table>
-            
+                                <td>{membresias.estado}</td>
+
+                                <td className="actions">
+
+                                    <button className="edit-btn">
+                                        ✏️
+                                    </button>
+
+                                    <button className="delete-btn">
+                                        🗑️
+                                    </button>
+
+                                </td>
+
+
+                            </tr>
+
+                        ))
+                    }
+
+                </tbody>
+
+            </table>
+
 
         </DashboardLayout>
     );

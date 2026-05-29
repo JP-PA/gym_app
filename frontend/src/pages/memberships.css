@@ -37,3 +37,106 @@
 
     background:#f9fafb;
 }
+.actions {
+    display: flex;
+    gap: 12px;
+}
+.edit-btn,
+.delete-btn{
+
+    border:none;
+
+    padding:8px 10px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    transition:0.2s;
+}
+.edit-btn{
+
+    background:#3b82f6;
+    color:white;
+}
+
+.edit-btn:hover{
+
+    transform:scale(1.05);
+}
+.delete-btn{
+
+    background:#ef4444;
+    color:white;
+}
+
+.delete-btn:hover{
+
+    transform:scale(1.05);
+}
+.estado-activa{
+
+    background:#dcfce7;
+    color:#15803d;
+
+    padding:5px 10px;
+
+    border-radius:20px;
+}
+
+
+.estado-activa{
+    background:#dcfce7;
+    color:#15803d;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.estado-vencida{
+    background:#fee2e2;
+    color:#b91c1c;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:bold;
+}
+.edit-btn:hover,
+.delete-btn:hover{
+    transform: scale(1.05);
+}
+.header-container{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+}
+
+.add-btn{
+
+    background:#22c55e;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 18px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:0.2s;
+}
+
+.add-btn:hover{
+
+    background:#16a34a;
+
+    transform:scale(1.03);
+}

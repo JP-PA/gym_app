@@ -37,50 +37,70 @@ function Usuarios() {
 
         <DashboardLayout>
 
-            <h1><strong>Usuarios</strong></h1>
+            <div className="header-container">
+                <h1>Usuarios</h1>
+
+                <button className="add-btn">
+                    + Nuevo Usuario
+                </button>
+            </div>
 
             {
-              <table className="users-table">
+                <table className="users-table">
 
-    <thead>
+                    <thead>
 
-        <tr>
+                        <tr>
 
-            <th>ID</th>
+                            <th>ID</th>
 
-            <th>Nombre</th>
+                            <th>Nombre</th>
 
-            <th>Correo</th>
+                            <th>Correo</th>
 
-            <th>Fecha_creacion</th>
+                            <th>Fecha_creacion</th>
 
-        </tr>
+                            <th>Acciones</th>
 
-    </thead>
+                        </tr>
 
-    <tbody>
+                    </thead>
 
-        {
-            users.map((usuario) => (
+                    <tbody>
 
-                <tr key={usuario.id}>
+                        {
+                            users.map((usuario) => (
 
-                    <td>{usuario.id}</td>
+                                <tr key={usuario.id}>
 
-                    <td>{usuario.nombre}</td>
+                                    <td>{usuario.id}</td>
 
-                    <td>{usuario.correo}</td>
+                                    <td>{usuario.nombre}</td>
 
-                    <td>{usuario.created_at}</td>
+                                    <td>{usuario.correo}</td>
 
-                </tr>
+                                    <td>{new Date(usuario.created_at).toLocaleDateString()}</td>
 
-            ))
-        }
+                                    <td className="actions">
 
-    </tbody>
+                                        <button className="edit-btn">
+                                            ✏️
+                                        </button>
 
-</table>
+                                        <button className="delete-btn">
+                                            🗑️
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+
+                            ))
+                        }
+
+                    </tbody>
+
+                </table>
             }
 
         </DashboardLayout>

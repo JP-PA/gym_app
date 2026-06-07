@@ -18,7 +18,7 @@ function Products() {
 
                 const data = await GetProducts();
 
-                
+
 
                 setProducts(data.productos);
 
@@ -39,51 +39,71 @@ function Products() {
 
         <DashboardLayout>
 
-            <h1><strong>Productos</strong></h1>
+            <div className="header-container">
+                <h1>productos</h1>
 
-            
-              <table className="products-table">
+                <button className="add-btn">
+                    + Nuevo Producto
+                </button>
+            </div>
 
-    <thead>
 
-        <tr>
+            <table className="products-table">
 
-            <th>ID</th>
+                <thead>
 
-            <th>Nombre</th>
+                    <tr>
 
-            <th>Precio</th>
+                        <th>ID</th>
 
-            <th>Stock</th>
+                        <th>Nombre</th>
 
-        </tr>
+                        <th>Precio</th>
 
-    </thead>
+                        <th>Stock</th>
 
-    <tbody>
+                        <th>Acciones</th>
 
-        {
-            products.map((producto) => (
+                    </tr>
 
-                <tr key={producto.id}>
+                </thead>
 
-                    <td>{producto.id}</td>
+                <tbody>
 
-                    <td>{producto.nombre}</td>
+                    {
+                        products.map((producto) => (
 
-                    <td>{producto.precio}</td>
+                            <tr key={producto.id}>
 
-                    <td>{producto.stock}</td>
+                                <td>{producto.id}</td>
 
-                </tr>
+                                <td>{producto.nombre}</td>
 
-            ))
-        }
+                                <td>{producto.precio}</td>
 
-    </tbody>
+                                <td>{producto.stock}</td>
 
-</table>
-            
+                                <td className="actions">
+
+                                    <button className="edit-btn">
+                                        ✏️
+                                    </button>
+
+                                    <button className="delete-btn">
+                                        🗑️
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        ))
+                    }
+
+                </tbody>
+
+            </table>
+
 
         </DashboardLayout>
     );

@@ -1,6 +1,6 @@
 import db from "../config/db.configuration.js"
 import { obtenerUsuario } from "../models/usuarios.model.js"
-import {crearVenta} from "../models/ventas.model.js"
+import {crearVenta,obtenerTodosLasVentas,obtenerVenta,obtenerDetalleVenta } from "../models/ventas.model.js"
 import { obtenerProductoPorId , actualizarStockProducto} from "../models/productos.model.js"
 import { crearDetalleVenta } from "../models/detalle_ventas.models.js"
 
@@ -109,4 +109,24 @@ const crearventacompleta = async({usuario_id,productos}) => {
     }
 }   
 
-export {crearventacompleta}
+const obtenerventas = async()=>{
+    return await obtenerTodosLasVentas
+}
+const obtenerVentaCompleta = async(id) => {
+
+    const venta = await obtenerVenta(id);
+
+    if(!venta){
+        return null;
+    }
+
+    const detalles =
+        await obtenerDetalleVenta(venta.id);
+
+    return {
+        ...venta,
+        productos: detalles
+    };
+};
+
+export {crearventacompleta,obtenerTodosLasVentas,obtenerVentaCompleta}

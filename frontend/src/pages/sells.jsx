@@ -1,6 +1,8 @@
+import VentaDetalleModal from "../components/VentaDetalleModel.jsx";
+import CrearVentaModal from "../components/CrearVentaModal.jsx";
 import { useEffect, useState } from "react";
-import { FaEye} from "react-icons/fa";
-import { GetVentas,GetVentaId } from "../services/sell.service";
+import { FaEye } from "react-icons/fa";
+import { GetVentas, GetVentaId, CreateVenta } from "../services/sell.service";
 import DashboardLayout from "../layouts/dashboardlayout";
 import "./sells.css";
 
@@ -12,55 +14,57 @@ function Ventas() {
 
     const [loadingVenta, setLoadingVenta] = useState(false);
 
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    console.log(showCreateModal);
+
     const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
+
+    const cargarVentas = async () => {
+
+        try {
+
+            const data = await GetVentas();
+
+            setVentas(data);
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    };
 
     useEffect(() => {
 
-        const fetchVentas = async () => {
-
-            try {
-
-                const data = await GetVentas();
-
-                setVentas(data);
-
-            } catch (error) {
-
-                console.error(error);
-
-            }
-
-        };
-
-        fetchVentas();
+        cargarVentas();
 
     }, []);
+    const handleView = async (id) => {
 
-const handleView = async (id) => {
+        try {
 
-    try {
+            setLoadingVenta(true);
 
-        setLoadingVenta(true);
+            const venta = await GetVentaId(id);
 
-        const venta = await GetVentaId(id);
+            console.log(venta)
 
-        console.log(venta)
+            setVentaSeleccionada(venta);
 
-        setVentaSeleccionada(venta);
+            setShowModal(true);
 
-        setShowModal(true);
+        } catch (error) {
 
-    } catch (error) {
+            console.error(error);
 
-        console.error(error);
+        } finally {
 
-    } finally {
+            setLoadingVenta(false);
 
-        setLoadingVenta(false);
+        }
 
-    }
-
-};
+    };
 
     return (
 
@@ -70,7 +74,10 @@ const handleView = async (id) => {
 
                 <h1>Ventas</h1>
 
-                <button className="add-btn">
+                <button
+                    className="add-btn"
+                    onClick={() => setShowCreateModal(true)}
+                >
                     + Nueva Venta
                 </button>
 
@@ -140,120 +147,17 @@ const handleView = async (id) => {
 
             </table>
 
-            
-    {
-    showModal && ventaSeleccionada && (
 
-        <div className="modal-overlay">
+            <VentaDetalleModal
+                open={showModal}
+                venta={ventaSeleccionada}
+                onClose={() => setShowModal(false)}
+            />
 
-            <div className="modal">
-
-                <div className="modal-header">
-                    <h2>
-                        Detalle Venta #{ventaSeleccionada.id}
-                    </h2>
-                </div>
-
-                <div className="venta-info">
-
-                    <div>
-                        <span>Usuario</span>
-                        <strong>
-                            {ventaSeleccionada.nombre_usuario}
-                        </strong>
-                    </div>
-
-                    <div>
-                        <span>Fecha</span>
-                        <strong>
-                            {
-                                new Date(
-                                    ventaSeleccionada.fecha
-                                ).toLocaleDateString()
-                            }
-                        </strong>
-                    </div>
-
-                    <div>
-                        <span>Total</span>
-                        <strong>
-                            $
-                            {
-                                Number(
-                                    ventaSeleccionada.total
-                                ).toLocaleString()
-                            }
-                        </strong>
-                    </div>
-
-                </div>
-
-                <h3>Productos Comprados</h3>
-
-                <table className="detalle-table">
-
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Valor Unitario</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        {
-                            ventaSeleccionada.productos?.map(
-                                (producto, index) => (
-
-                                    <tr key={index}>
-
-                                        <td>{producto.nombre}</td>
-
-                                        <td>{producto.cantidad}</td>
-
-                                        <td>
-                                            $
-                                            {
-                                                Number(
-                                                    producto.valor_unitario
-                                                ).toLocaleString()
-                                            }
-                                        </td>
-
-                                        <td>
-                                            $
-                                            {
-                                                Number(
-                                                    producto.subtotal
-                                                ).toLocaleString()
-                                            }
-                                        </td>
-
-                                    </tr>
-
-                                )
-                            )
-                        }
-
-                    </tbody>
-
-                </table>
-
-                <button
-                    className="close-btn"
-                    onClick={() => setShowModal(false)}
-                >
-                    Cerrar
-                </button>
-
-            </div>
-
-        </div>
-
-    )
-}
+            <CrearVentaModal
+                open={showCreateModal}
+                onClose={()=>setShowCreateModal(false)}
+            />
 
         </DashboardLayout>
 

@@ -1,3 +1,4 @@
+import Ventas from "../pages/sells.jsx";
 import api from "./api.js";
 
 export const GetVentas = async () => {
@@ -13,3 +14,11 @@ export const GetVentaId = async (id) => {
 
     return response.data;
 }
+
+export const CreateVenta = async (Venta) =>{
+
+    const response = await api.post("/ventas",Venta);
+
+    return response.data;
+
+};

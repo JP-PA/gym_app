@@ -38,7 +38,7 @@ function Usuarios() {
         <DashboardLayout>
 
             <div className="header-container">
-                <h1>Usuarios</h1>
+                <div><h1>Usuarios</h1><p className="page-description">Administra la comunidad de tu gimnasio.</p></div>
 
                 <button className="add-btn">
                     + Nuevo Usuario
@@ -46,7 +46,7 @@ function Usuarios() {
             </div>
 
             {
-                <table className="users-table">
+                <div className="table-scroll" role="region" aria-label="Listado de usuarios" tabIndex="0"><table className="users-table">
 
                     <thead>
 
@@ -58,7 +58,7 @@ function Usuarios() {
 
                             <th>Correo</th>
 
-                            <th>Fecha_creacion</th>
+                            <th>Fecha de creación</th>
 
                             <th>Acciones</th>
 
@@ -67,6 +67,7 @@ function Usuarios() {
                     </thead>
 
                     <tbody>
+{users.length === 0 && <tr><td colSpan={5} className="empty-state">No hay registros para mostrar.</td></tr>}
 
                         {
                             users.map((usuario) => (
@@ -83,11 +84,11 @@ function Usuarios() {
 
                                     <td className="actions">
 
-                                        <button className="edit-btn">
+                                        <button className="edit-btn" aria-label="Editar registro">
                                             ✏️
                                         </button>
 
-                                        <button className="delete-btn">
+                                        <button className="delete-btn" aria-label="Eliminar registro">
                                             🗑️
                                         </button>
 
@@ -100,7 +101,7 @@ function Usuarios() {
 
                     </tbody>
 
-                </table>
+                </table></div>
             }
 
         </DashboardLayout>

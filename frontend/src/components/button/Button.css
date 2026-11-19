@@ -1,8 +1,1 @@
-.button{
-  background-color: orange;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-}
+/* Shared button styles live in styles/global.css. */

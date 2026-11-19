@@ -40,7 +40,7 @@ function Products() {
         <DashboardLayout>
 
             <div className="header-container">
-                <h1>productos</h1>
+                <div><h1>Productos</h1><p className="page-description">Consulta tu catálogo, precios y existencias.</p></div>
 
                 <button className="add-btn">
                     + Nuevo Producto
@@ -48,7 +48,7 @@ function Products() {
             </div>
 
 
-            <table className="products-table">
+            <div className="table-scroll" role="region" aria-label="Listado de productos" tabIndex="0"><table className="products-table">
 
                 <thead>
 
@@ -69,6 +69,7 @@ function Products() {
                 </thead>
 
                 <tbody>
+{products.length === 0 && <tr><td colSpan={5} className="empty-state">No hay registros para mostrar.</td></tr>}
 
                     {
                         products.map((producto) => (
@@ -85,11 +86,11 @@ function Products() {
 
                                 <td className="actions">
 
-                                    <button className="edit-btn">
+                                    <button className="edit-btn" aria-label="Editar registro">
                                         ✏️
                                     </button>
 
-                                    <button className="delete-btn">
+                                    <button className="delete-btn" aria-label="Eliminar registro">
                                         🗑️
                                     </button>
 
@@ -102,7 +103,7 @@ function Products() {
 
                 </tbody>
 
-            </table>
+            </table></div>
 
 
         </DashboardLayout>

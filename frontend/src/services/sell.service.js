@@ -1,4 +1,3 @@
-import Ventas from "../pages/sells.jsx";
 import api from "./api.js";
 
 export const GetVentas = async () => {

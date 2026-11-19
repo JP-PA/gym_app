@@ -2,7 +2,7 @@ import VentaDetalleModal from "../components/VentaDetalleModel.jsx";
 import CrearVentaModal from "../components/CrearVentaModal.jsx";
 import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
-import { GetVentas, GetVentaId, CreateVenta } from "../services/sell.service";
+import { GetVentas, GetVentaId } from "../services/sell.service";
 import DashboardLayout from "../layouts/dashboardlayout";
 import "./sells.css";
 
@@ -19,26 +19,12 @@ function Ventas() {
 
     const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
 
-    const cargarVentas = async () => {
-
-        try {
-
-            const data = await GetVentas();
-
-            setVentas(data);
-
-        } catch (error) {
-
-            console.error(error);
-
-        }
-
-    };
-
     useEffect(() => {
-
-        cargarVentas();
-
+        let active = true;
+        GetVentas().then(data => {
+            if (active) setVentas(data);
+        }).catch(console.error);
+        return () => { active = false; };
     }, []);
     const handleView = async (id) => {
 
@@ -72,7 +58,7 @@ function Ventas() {
 
             <div className="header-container">
 
-                <h1>Ventas</h1>
+                <div><h1>Ventas</h1><p className="page-description">Consulta el historial y los detalles de tus ventas.</p></div>
 
                 <button
                     className="add-btn"
@@ -83,7 +69,7 @@ function Ventas() {
 
             </div>
 
-            <table className="ventas-table">
+            <div className="table-scroll" role="region" aria-label="Listado de ventas" tabIndex="0"><table className="ventas-table">
 
                 <thead>
 
@@ -104,6 +90,7 @@ function Ventas() {
                 </thead>
 
                 <tbody>
+{ventas.length === 0 && <tr><td colSpan={5} className="empty-state">No hay registros para mostrar.</td></tr>}
 
                     {
                         ventas.map((venta) => (
@@ -129,7 +116,8 @@ function Ventas() {
                                 <td className="actions">
 
                                     <button
-                                        className="view-btn"
+                                        className="view-btn" aria-label="Ver detalle de venta"
+                                        disabled={loadingVenta}
                                         onClick={() => handleView(venta.id)}
                                     >
                                         <FaEye />
@@ -145,7 +133,7 @@ function Ventas() {
 
                 </tbody>
 
-            </table>
+            </table></div>
 
 
             <VentaDetalleModal

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+
 
 import DashboardLayout from "../layouts/dashboardlayout";
 
@@ -41,16 +41,16 @@ function Memberships() {
         <DashboardLayout>
 
             <div className="header-container">
-                <h1>Membresias</h1>
+                <div><h1>Membresías</h1><p className="page-description">Consulta los planes y la vigencia de las membresías.</p></div>
 
                 <button className="add-btn">
-                    + Nuevo Membresia
+                    + Nueva Membresía
                 </button>
             </div>
 
 
 
-            <table className="memberships-table">
+            <div className="table-scroll" role="region" aria-label="Listado de membresías" tabIndex="0"><table className="memberships-table">
 
                 <thead>
 
@@ -60,11 +60,11 @@ function Memberships() {
 
                         <th>Usuario</th>
 
-                        <th>tipo</th>
+                        <th>Tipo</th>
 
-                        <th>Fecha_inicio</th>
+                        <th>Fecha de inicio</th>
 
-                        <th>Fecha_fin</th>
+                        <th>Fecha de fin</th>
 
                         <th>Estado</th>
 
@@ -75,6 +75,7 @@ function Memberships() {
                 </thead>
 
                 <tbody>
+{memberships.length === 0 && <tr><td colSpan={7} className="empty-state">No hay registros para mostrar.</td></tr>}
 
                     {
                         memberships.map((membresias) => (
@@ -95,11 +96,11 @@ function Memberships() {
 
                                 <td className="actions">
 
-                                    <button className="edit-btn">
+                                    <button className="edit-btn" aria-label="Editar registro">
                                         ✏️
                                     </button>
 
-                                    <button className="delete-btn">
+                                    <button className="delete-btn" aria-label="Eliminar registro">
                                         🗑️
                                     </button>
 
@@ -113,7 +114,7 @@ function Memberships() {
 
                 </tbody>
 
-            </table>
+            </table></div>
 
 
         </DashboardLayout>

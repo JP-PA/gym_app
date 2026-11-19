@@ -1,153 +1,64 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaDumbbell, FaArrowRight, FaCheck } from "react-icons/fa";
 import { loginUser } from "../../services/auth.service.js";
 import { RegisterUser } from "../../services/registre.service.js";
 import "./login.css";
-import { useNavigate } from "react-router-dom";
-import Button from "../../components/button/Button.jsx";
 
-function Login() {
-
+export default function Login() {
     const [isRegister, setIsRegister] = useState(false);
-
-    const [Username, setUserName] = useState("")
-
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-
     const [password, setPassword] = useState("");
-
     const [confirmPassword, setConfirmPassword] = useState("");
-
     const [message, setMessage] = useState("");
-
-    const [messageType, setMessageType] = useState("");
-
+    const [messageType, setMessageType] = useState("error");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const handleLogin = async () => {
-
-        try {
-
-            const data = await loginUser({
-                correo: email,
-                password
-            });
-
-            localStorage.setItem("token", data.token)
-
-            setMessage("Login successful");
-            setMessageType("success");
-            
-
-            navigate("/dashboard");
-        } catch (error) {
-
-            setMessage(
-                error.response?.data?.message || "Unexpected error"
-            );
-
-            setMessageType("error");
-            ;
-
-        }
-
-
-    };
-
-    const handleRegister = async () => {
-        if (password !== confirmPassword) {
-
-            alert("Passwords do not match");
-
+    async function handleSubmit(event) {
+        event.preventDefault();
+        setMessage("");
+        setMessageType("error");
+        if (isRegister && password !== confirmPassword) {
+            setMessage("Las contraseñas no coinciden.");
             return;
         }
+        setLoading(true);
         try {
-
-            const data = await RegisterUser({
-                nombre: Username,
-                correo: email,
-                password
-            });
-
-            console.log(data);
-
-        } catch (error) {
-
-            setMessage(
-                error.response?.data?.mensaje || "Unexpected error"
-            );
-
-            setMessageType("error");
-            ;
-
-        }
-    };
-
-    return (
-        <div className="Login-container">
-
-            <h1>
-                {isRegister ? "Register" : "Gym Login"}
-            </h1>
-
-            {isRegister && (
-                <input type="text" placeholder="Username" value={Username} onChange={(e) => setUserName(e.target.value)} />
-            )}
-
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-
-            {isRegister && (
-                <input
-                    type="password"
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-            )}
-            {
-                message && (
-                    <div
-                        className={`message ${messageType}`}
-                    >
-                        {message}
-                    </div>
-                )
+            if (isRegister) {
+                await RegisterUser({ nombre: name, correo: email, password });
+                setIsRegister(false);
+                setPassword("");
+                setConfirmPassword("");
+                setMessage("Tu cuenta está lista. Inicia sesión para continuar.");
+                setMessageType("success");
+            } else {
+                const data = await loginUser({ correo: email, password });
+                localStorage.setItem("token", data.token);
+                navigate("/dashboard");
             }
-            <Button
-                text={isRegister ? "Register" : "Login"}
-                onClick={
-                    isRegister
-                        ? handleRegister
-                        : handleLogin
-                }
-            />
-
-            <p
-                onClick={() => setIsRegister(!isRegister)}
-                style={{
-                    cursor: "pointer",
-                    color: "orange"
-                }}
-            >
-                {
-                    isRegister
-                        ? "Already have an account?"
-                        : "Create account"
-                }
-            </p>
-
-        </div>
-    );
+        } catch (error) {
+            setMessage(error.response?.data?.mensaje || error.response?.data?.message || "No fue posible continuar. Revisa tus datos y la conexión con el servidor.");
+        } finally {
+            setLoading(false);
+        }
+    }
+    return <main className="login-page">
+        <section className="login-story"><div className="brand"><span className="brand-icon"><FaDumbbell /></span><span>GYM<span className="brand-accent">.</span><small>ADMINISTRACIÓN</small></span></div>
+            <div className="story-content"><span className="story-tag">EL SIGUIENTE NIVEL DE TU GIMNASIO</span><h1>Más enfoque.<br />Más energía.<br /><span>Más posibilidades.</span></h1><p>El espacio donde tu gimnasio se organiza y tu comunidad crece.</p><div className="story-features"><span><FaCheck /> Usuarios y membresías</span><span><FaCheck /> Productos y ventas</span></div></div>
+            <p className="story-footer">Cada gran resultado empieza con una buena gestión.</p><FaDumbbell className="story-decoration" aria-hidden="true" />
+        </section>
+        <section className="login-form-panel"><div className="Login-container"><p className="eyebrow">BIENVENIDO A TU ESPACIO</p><h2>{isRegister ? "Crea tu cuenta" : "Qué bueno verte de nuevo"}</h2><p className="login-subtitle">{isRegister ? "Completa tus datos para empezar." : "Ingresa tus datos para gestionar tu gimnasio."}</p>
+            <form onSubmit={handleSubmit}>
+                {isRegister && <label htmlFor="name">Nombre<input id="name" autoComplete="name" placeholder="Tu nombre" required value={name} onChange={e => setName(e.target.value)} /></label>}
+                <label htmlFor="email">Correo electrónico<input id="email" type="email" autoComplete="email" placeholder="nombre@ejemplo.com" required value={email} onChange={e => setEmail(e.target.value)} /></label>
+                <label htmlFor="password">Contraseña<input id="password" type="password" autoComplete={isRegister ? "new-password" : "current-password"} placeholder="Ingresa tu contraseña" required value={password} onChange={e => setPassword(e.target.value)} /></label>
+                {isRegister && <label htmlFor="confirm">Confirma tu contraseña<input id="confirm" type="password" autoComplete="new-password" placeholder="Repite tu contraseña" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} /></label>}
+                {message && <p className={`message ${messageType}`} role="status">{message}</p>}
+                <button className="login-submit" disabled={loading} type="submit">{loading ? "Un momento…" : isRegister ? "Crear cuenta" : "Iniciar sesión"}<FaArrowRight /></button>
+            </form>
+            <p className="login-switch">{isRegister ? "¿Ya tienes una cuenta?" : "¿Primera vez por aquí?"} <button type="button" disabled={loading} onClick={() => { setIsRegister(!isRegister); setMessage(""); }}>{isRegister ? "Inicia sesión" : "Crea una cuenta"}</button></p>
+            <div className="login-footer">GYM · Tu gimnasio, en un solo lugar.</div>
+        </div></section>
+    </main>;
 }
-
-export default Login;

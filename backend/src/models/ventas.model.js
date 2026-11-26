@@ -1,21 +1,17 @@
+import { queryFilteredPage } from "../utils/listFilters.js";
 // Importo la configuracion de la base de datos para empezar a hacer querys
 import db from "../config/db.configuration.js"
 
 const Connection = db.promise()
 
 // Se obtienen todas las ventas 
-const obtenerTodosLasVentas = async () => {
-    const [rows] = await Connection.query(`
-      SELECT
-        v.id, 
-        v.fecha,
-        v.total,
-        u.nombre AS nombre_usuario 
-        FROM ventas v
-        JOIN usuarios u ON v.usuario_id = u.id
-      `)
-    return rows
-}
+const obtenerTodosLasVentas = async (pagination) => {
+    const select = `SELECT v.id, v.fecha, v.total, u.nombre AS nombre_usuario`;
+    const from = `FROM ventas v JOIN usuarios u ON v.usuario_id = u.id`;
+    if (pagination) return queryFilteredPage(Connection, "sales", select, from, "v.id DESC", pagination);
+    const [rows] = await Connection.query(`${select} ${from} ORDER BY v.id DESC`);
+    return rows;
+};
 
 // se obtiene ventas por id
 const obtenerVenta = async (id) => {

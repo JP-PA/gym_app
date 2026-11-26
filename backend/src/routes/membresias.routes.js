@@ -4,11 +4,12 @@ import validateParams from "../middleware/validateparams.js"
 import{consultarMembresiaid,consultarMembresias,crearMembresia,actualizarMembresia,eliminarMembresia
 }from "../controllers/membresias.controller.js"
 import { idSchema,crearMembresiaSchema,actualizarMembresiaSchema} from "../validators/membresia.validator.js";
-import authMiddleware from "../middleware/auth.middleware.js";
+import authMiddleware, { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
+router.use(authMiddleware, requireAdmin);
 
-router.get("/",consultarMembresias,authMiddleware);
+router.get("/",consultarMembresias);
 router.get("/:id",validateParams(idSchema),consultarMembresiaid);
 router.post("/",validate(crearMembresiaSchema),crearMembresia);
 router.put("/:id",validateParams(idSchema),validate(actualizarMembresiaSchema),actualizarMembresia);

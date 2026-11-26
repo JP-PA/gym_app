@@ -3,6 +3,9 @@ import {
   Routes,
   Route
 } from "react-router-dom";
+import AuthProvider from "./auth/AuthProvider.jsx";
+import Personal from "./pages/personal.jsx";
+import Routines from "./pages/routines.jsx";
 import Login from "./pages/auth/login.jsx";
 import Dashboard from "./pages/dashboard.jsx";
 import Usuarios from "./pages/users.jsx";
@@ -15,7 +18,7 @@ function App() {
 
   return (
 
-    <BrowserRouter>
+    <AuthProvider><BrowserRouter>
 
       <Routes>
 
@@ -27,7 +30,7 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="admin">
               <Dashboard />
             </ProtectedRoute>
           }
@@ -36,7 +39,7 @@ function App() {
         <Route
           path="/users"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="admin">
               <Usuarios />
             </ProtectedRoute>
           }
@@ -45,7 +48,7 @@ function App() {
         <Route
           path="/products"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="admin">
               <Productos/>
             </ProtectedRoute>
           }
@@ -54,7 +57,7 @@ function App() {
         <Route
           path="/sells"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="admin">
               <Ventas />
             </ProtectedRoute>
           }
@@ -63,7 +66,7 @@ function App() {
         <Route
           path="/memberships"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="admin">
               <Membresias />
             </ProtectedRoute>
           }
@@ -71,9 +74,22 @@ function App() {
 
 
 
+        <Route
+          path="/admin/notificaciones"
+          element={
+            <ProtectedRoute role="admin">
+              <Membresias key="notifications" notifications />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/rutinas" element={<ProtectedRoute><Routines /></ProtectedRoute>} />
+
+        {["resumen", "perfil", "membresias", "compras"].map(section => <Route key={section} path={section === "resumen" ? "/mi" : `/mi/${section}`} element={<ProtectedRoute role="user"><Personal key={section} section={section} /></ProtectedRoute>} />)}
+        <Route path="*" element={<Login />} />
       </Routes>
 
-    </BrowserRouter>
+    </BrowserRouter></AuthProvider>
 
   );
 }

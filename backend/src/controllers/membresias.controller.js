@@ -1,6 +1,6 @@
+import { parseListQuery } from "../utils/listFilters.js";
 import * as membresiaservicer from "../services/membresias.service.js"
 import catchAsync from "../utils/catchAsync.js"
-import AppError from "../utils/AppError.js"
 
 const crearMembresia = catchAsync(async(req,res,next) =>{
     
@@ -31,7 +31,7 @@ const consultarMembresiaid = catchAsync(async (req,res) => {
 
 const consultarMembresias = catchAsync (async (req,res) => {
     
-        const consultar = await membresiaservicer.obtenerMembresias()
+        const consultar = await membresiaservicer.obtenerMembresias(parseListQuery(req.query, "memberships"))
 
         res.json(consultar)
     
@@ -41,13 +41,13 @@ const consultarMembresias = catchAsync (async (req,res) => {
 
 const actualizarMembresia = catchAsync(async(req,res) =>{
    
-        const {tipo,precio,usuario_id} = req.body;
+        const {tipo,precio} = req.body;
         const {id} = req.params
 
-        const actualizar = await membresiaservicer.actualizarMembresia(tipo,precio,usuario_id,id)
+        const actualizar = await membresiaservicer.actualizarMembresia(id, { tipo, precio })
 
-        return res.status(201).json({
-            mensaje : "Membresia actualizada",
+        return res.status(200).json({
+            mensaje : "Membresía renovada correctamente",
             data : actualizar
         })
 

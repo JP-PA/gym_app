@@ -1,3 +1,4 @@
+import { obtenerUsuario } from "../models/usuarios.model.js";
 import * as membresiaModel from "../models/membresias.model.js";
 import AppError from "../utils/AppError.js";
 
@@ -32,6 +33,8 @@ const crearMembresia = async (data) => {
     throw new AppError("Tipo de membresía inválido",400);
   }
 
+  if (!await obtenerUsuario(usuario_id)) throw new AppError("El cliente no existe", 404);
+
   const fecha_inicio = new Date();
   const fecha_fin = calcularFechaFin(fecha_inicio, tipo);
 
@@ -46,8 +49,8 @@ const crearMembresia = async (data) => {
 };
 
 // OBTENER TODAS
-const obtenerMembresias = async () => {
-  return await membresiaModel.obtenerTodasLasMembresias();
+const obtenerMembresias = async (pagination) => {
+  return await membresiaModel.obtenerTodasLasMembresias(pagination);
 };
 
 //  OBTENER POR USUARIO
@@ -55,26 +58,16 @@ const obtenerMembresiaUsuario = async (id) => {
   return await membresiaModel.obtenerMembresia(id);
 };
 
-//  ACTUALIZAR (recalcula todo)
-const actualizarMembresia = async (id, data) => {
-  const { tipo, precio, usuario_id } = data;
+// Renovar una membresía vencida conservando el cliente y su ID.
+const actualizarMembresia = async (id, { tipo, precio }) => {
+  if (!DURACIONES[tipo]) throw new AppError("Tipo de membresía inválido", 400);
+  const actual = await membresiaModel.obtenerMembresia(id);
+  if (!actual) throw new AppError("Membresía no encontrada", 404);
+  if (actual.estado !== "vencida") throw new AppError("Solo se pueden renovar membresías vencidas", 409);
 
-  if (!DURACIONES[tipo]) {
-    throw new AppError("Tipo inválido",400);
-  }
-
-  const fecha_inicio = new Date();
-  const fecha_fin = calcularFechaFin(fecha_inicio, tipo);
-  const estado = calcularEstado(fecha_fin);
-
-  return await membresiaModel.actualizarMembresias({
-    id,
-    tipo,
-    precio,
-    fecha_inicio,
-    fecha_fin,
-    usuario_id
-  });
+  const updated = await membresiaModel.actualizarMembresias({ id, tipo, precio, dias: DURACIONES[tipo] });
+  if (!updated) throw new AppError("La membresía ya fue renovada o dejó de estar disponible. Actualiza el listado.", 409);
+  return await membresiaModel.obtenerMembresia(id);
 };
 
 //  ELIMINAR

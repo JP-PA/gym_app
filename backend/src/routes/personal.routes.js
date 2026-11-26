@@ -1,0 +1,12 @@
+import express from "express";
+import authMiddleware from "../middleware/auth.middleware.js";
+import validateParams from "../middleware/validateparams.js";
+import { idSchema } from "../validators/usuario.validator.js";
+import { profile, memberships, purchases, purchase } from "../controllers/personal.controller.js";
+const router = express.Router();
+router.use(authMiddleware);
+router.get("/perfil", profile);
+router.get("/membresias", memberships);
+router.get("/compras", purchases);
+router.get("/compras/:id", validateParams(idSchema), purchase);
+export default router;

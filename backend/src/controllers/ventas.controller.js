@@ -1,30 +1,15 @@
+import { parseListQuery } from "../utils/listFilters.js";
 import { crearventacompleta,obtenerTodosLasVentas,obtenerVentaCompleta } from "../services/ventas.service.js"
 import catchAsync from "../utils/catchAsync.js"
 
-const crearVentaController = async (req, res) => {
-
-    try {
-
-        const { usuario_id, productos } = req.body
-
-        const venta = await crearventacompleta({
-            usuario_id,
-            productos
-        })
-
-        return res.status(201).json(venta)
-
-    } catch(error){
-
-        return res.status(400).json({
-            message: error.message
-        })
-    }
-}
+const crearVentaController = catchAsync(async (req, res) => {
+    const venta = await crearventacompleta(req.body);
+    res.status(201).json(venta);
+});
 
 const obtenerTodasLasVentas = catchAsync(async(req,res)=> {
    
-    const ventas = await obtenerTodosLasVentas();
+    const ventas = await obtenerTodosLasVentas(parseListQuery(req.query, "sales"));
     res.json(ventas)
 
 }); 

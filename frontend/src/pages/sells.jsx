@@ -1,31 +1,27 @@
+import SearchFilters from "../components/SearchFilters.jsx";
+import Pagination from "../components/Pagination.jsx";
+import usePaginatedList from "../hooks/usePaginatedList.js";
 import VentaDetalleModal from "../components/VentaDetalleModel.jsx";
 import CrearVentaModal from "../components/CrearVentaModal.jsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { GetVentas, GetVentaId } from "../services/sell.service";
 import DashboardLayout from "../layouts/dashboardlayout";
-import "./sells.css";
 
 function Ventas() {
 
-    const [ventas, setVentas] = useState([]);
+    const list = usePaginatedList(GetVentas);
+    const { data: ventas, loading, error } = list;
 
     const [showModal, setShowModal] = useState(false);
 
     const [loadingVenta, setLoadingVenta] = useState(false);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
-    console.log(showCreateModal);
+    const [success, setSuccess] = useState("");
 
     const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
 
-    useEffect(() => {
-        let active = true;
-        GetVentas().then(data => {
-            if (active) setVentas(data);
-        }).catch(console.error);
-        return () => { active = false; };
-    }, []);
     const handleView = async (id) => {
 
         try {
@@ -55,6 +51,7 @@ function Ventas() {
     return (
 
         <DashboardLayout>
+            {success && <p className="message success" role="status">{success}</p>}
 
             <div className="header-container">
 
@@ -62,13 +59,15 @@ function Ventas() {
 
                 <button
                     className="add-btn"
-                    onClick={() => setShowCreateModal(true)}
+                    onClick={() => { setSuccess(""); setShowCreateModal(true); }}
                 >
                     + Nueva Venta
                 </button>
 
             </div>
 
+            <SearchFilters resource="sales" list={list} />
+            {error && <p className="message error" role="alert">{list.errorMessage || "No se pudo cargar el listado."} <button onClick={list.retry}>Reintentar</button></p>}
             <div className="table-scroll" role="region" aria-label="Listado de ventas" tabIndex="0"><table className="ventas-table">
 
                 <thead>
@@ -90,7 +89,8 @@ function Ventas() {
                 </thead>
 
                 <tbody>
-{ventas.length === 0 && <tr><td colSpan={5} className="empty-state">No hay registros para mostrar.</td></tr>}
+{loading && <tr><td colSpan={5} className="empty-state" role="status">Cargando registros…</td></tr>}
+{!loading && !error && ventas.length === 0 && <tr><td colSpan={5} className="empty-state">No hay registros que coincidan con la búsqueda.</td></tr>}
 
                     {
                         ventas.map((venta) => (
@@ -134,6 +134,7 @@ function Ventas() {
                 </tbody>
 
             </table></div>
+            <Pagination {...list} />
 
 
             <VentaDetalleModal
@@ -142,10 +143,10 @@ function Ventas() {
                 onClose={() => setShowModal(false)}
             />
 
-            <CrearVentaModal
-                open={showCreateModal}
-                onClose={()=>setShowCreateModal(false)}
-            />
+            {showCreateModal && <CrearVentaModal
+                onClose={() => setShowCreateModal(false)}
+                onSuccess={() => { setShowCreateModal(false); setSuccess("Venta registrada correctamente."); list.setPage(1); list.retry(); }}
+            />}
 
         </DashboardLayout>
 

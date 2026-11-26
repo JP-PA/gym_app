@@ -1,3 +1,5 @@
+import AppError from "../utils/AppError.js";
+import { queryFilteredPage } from "../utils/listFilters.js";
 // Importo la configuracion de la base de datos para empezar a hacer querys
 import db from "../config/db.configuration.js";
 
@@ -5,20 +7,18 @@ import db from "../config/db.configuration.js";
 const connection = db.promise()
 
 // Se obtiene todos los productos
-const obtenerTodosLosProductos = async () =>{
-
-    const [rows] = await connection.query(`
-        SELECT * FROM productos
-        `)
-
-    return rows
+const obtenerTodosLosProductos = async (pagination) => {
+    const select = `SELECT p.*`;
+    const from = `FROM productos p`;
+    if (pagination) return queryFilteredPage(connection, "products", select, from, "p.id DESC", pagination);
+    const [rows] = await connection.query(`${select} ${from} ORDER BY p.id DESC`);
+    return rows;
 };
 
 // se obtiene un producto segun el id
-const obtenerProductoPorId = async (id) => {
+const obtenerProductoPorId = async (id, transaction) => {
 
-    const [rows] = await connection.query(`SELECT * FROM productos 
-        WHERE id = ? `,[id])
+    const [rows] = await (transaction || connection).query(`SELECT * FROM productos WHERE id = ?${transaction ? " FOR UPDATE" : ""}`, [id])
      
     if (rows.length === 0) return null;
 
@@ -80,11 +80,12 @@ const actualizarStockProducto = async (
         producto_id
       }
 ) => {
-    await connectionDB.query(`
+    const [result] = await connectionDB.query(`
     UPDATE productos 
-    SET Stock = stock - ? 
-    WHERE id = ? 
-    `,[cantidad,producto_id])
+    SET stock = stock - ?
+    WHERE id = ? AND stock >= ?
+    `,[cantidad,producto_id,cantidad]);
+    if (result.affectedRows !== 1) throw new AppError("Stock insuficiente", 409);
 }
 
 export 

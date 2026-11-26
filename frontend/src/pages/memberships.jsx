@@ -1,55 +1,42 @@
-import { useEffect, useState } from "react";
+import SearchFilters from "../components/SearchFilters.jsx";
+import RenewMembershipModal from "../components/RenewMembershipModal.jsx";
+import { useState } from "react";
+import CreateRecordModal from "../components/CreateRecordModal.jsx";
+import Pagination from "../components/Pagination.jsx";
+import usePaginatedList from "../hooks/usePaginatedList.js";
+
 
 
 import DashboardLayout from "../layouts/dashboardlayout";
 
-import { GetMemberships } from "../services/memberships.service";
-
-import "./memberships.css"
-
-function Memberships() {
-
-    const [memberships, setMemberships] = useState([]);
-
-    useEffect(() => {
-
-        const fetchMemberships = async () => {
-
-            try {
-
-                const data = await GetMemberships();
+import { GetMemberships, GetExpiredMonthlyMemberships } from "../services/memberships.service";
 
 
+function Memberships({ notifications = false }) {
 
-                setMemberships(data);
-
-                console.log(data.membresias);
-
-            } catch (error) {
-
-                console.error(error);
-
-            }
-        };
-
-        fetchMemberships();
-
-    }, []);
+    const [renewing, setRenewing] = useState(null);
+    const [showCreate, setShowCreate] = useState(false);
+    const [success, setSuccess] = useState("");
+    const list = usePaginatedList(notifications ? GetExpiredMonthlyMemberships : GetMemberships);
+    const { data: memberships, loading, error } = list;
 
     return (
 
         <DashboardLayout>
+            {success && <p className="message success" role="status">{success}</p>}
 
             <div className="header-container">
-                <div><h1>Membresías</h1><p className="page-description">Consulta los planes y la vigencia de las membresías.</p></div>
+                <div><h1>{notifications ? "Notificaciones" : "Membresías"}</h1><p className="page-description">{notifications ? "Mensualidades vencidas" : "Consulta los planes y la vigencia de las membresías."}</p></div>
 
-                <button className="add-btn">
+                {!notifications && <button className="add-btn" onClick={() => { setSuccess(""); setShowCreate(true); }}>
                     + Nueva Membresía
-                </button>
+                </button>}
             </div>
 
 
 
+            {!notifications && <SearchFilters resource="memberships" list={list} />}
+            {error && <p className="message error" role="alert">{list.errorMessage || "No se pudo cargar el listado."} <button onClick={list.retry}>Reintentar</button></p>}
             <div className="table-scroll" role="region" aria-label="Listado de membresías" tabIndex="0"><table className="memberships-table">
 
                 <thead>
@@ -61,6 +48,8 @@ function Memberships() {
                         <th>Usuario</th>
 
                         <th>Tipo</th>
+
+                        <th>Precio</th>
 
                         <th>Fecha de inicio</th>
 
@@ -75,7 +64,8 @@ function Memberships() {
                 </thead>
 
                 <tbody>
-{memberships.length === 0 && <tr><td colSpan={7} className="empty-state">No hay registros para mostrar.</td></tr>}
+{loading && <tr><td colSpan={8} className="empty-state" role="status">Cargando registros…</td></tr>}
+{!loading && !error && memberships.length === 0 && <tr><td colSpan={8} className="empty-state">{notifications ? "No hay mensualidades vencidas." : "No hay registros que coincidan con la búsqueda."}</td></tr>}
 
                     {
                         memberships.map((membresias) => (
@@ -88,21 +78,21 @@ function Memberships() {
 
                                 <td>{membresias.tipo}</td>
 
+                                <td>{Number(membresias.precio).toLocaleString("es-CO", { style: "currency", currency: "COP" })}</td>
+
                                 <td>{new Date(membresias.fecha_inicio).toLocaleDateString()}</td>
 
                                 <td>{new Date(membresias.fecha_fin).toLocaleDateString()}</td>
 
-                                <td>{membresias.estado}</td>
+                                <td><span className={`status-pill ${membresias.estado === "vencida" ? "status-expired" : ""}`}>{membresias.estado}</span></td>
 
                                 <td className="actions">
 
-                                    <button className="edit-btn" aria-label="Editar registro">
-                                        ✏️
-                                    </button>
+                                    {membresias.estado === "vencida" && <button className="renew-btn" onClick={() => { setSuccess(""); setRenewing(membresias); }} aria-label={`Renovar membresía de ${membresias.usuario_nombre}`}>Renovar</button>}
 
-                                    <button className="delete-btn" aria-label="Eliminar registro">
+                                    {!notifications && <button className="delete-btn" aria-label="Eliminar registro">
                                         🗑️
-                                    </button>
+                                    </button>}
 
                                 </td>
 
@@ -115,8 +105,11 @@ function Memberships() {
                 </tbody>
 
             </table></div>
+            <Pagination {...list} />
 
 
+            {showCreate && <CreateRecordModal kind="membership" onClose={() => setShowCreate(false)} onSuccess={() => { setShowCreate(false); setSuccess("Registro guardado correctamente."); list.setPage(1); list.retry(); }} />}
+            {renewing && <RenewMembershipModal membership={renewing} onClose={() => setRenewing(null)} onSuccess={() => { setRenewing(null); setSuccess("Membresía renovada correctamente. Ya está activa."); list.retry(); }} />}
         </DashboardLayout>
     );
 }

@@ -1,8 +1,8 @@
 import api from "./api.js";
 
-export const GetVentas = async () => {
+export const GetVentas = async (params, signal) => {
 
-    const response = await api.get("/ventas");
+    const response = await api.get("/ventas", { params, signal });
 
     return response.data;
 };

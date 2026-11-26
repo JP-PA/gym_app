@@ -1,10 +1,11 @@
+import { parseListQuery } from "../utils/listFilters.js";
 import * as userservice from "../services/usuarios.service.js"
 import catchAsync from "../utils/catchAsync.js"
 import AppError from "../utils/AppError.js"
 
 //obtener todos los usuarios
 const obtenerUsuarios = catchAsync(async(req,res) => {   
-        const usuarios = await userservice.obtenerUsuarios();
+        const usuarios = await userservice.obtenerUsuarios(parseListQuery(req.query, "users"));
         res.json(usuarios)
 });
 
@@ -24,8 +25,6 @@ const obtenerUsuario = catchAsync(async(req,res) => {
 
 // crear usuario
 const crearUsuario = catchAsync(async (req,res) => {
-        const{nombre,correo,password} = req.body
-
         const nuevoUsuario = await userservice.crearUsuario(req.body)
 
         res.status(201).json({
@@ -55,12 +54,12 @@ const loginUsuario = catchAsync(async (req, res) => {
 const actualizarUsuario = catchAsync(async (req,res) => {
        const{nombre,correo,password} = req.body
        const {id} = req.params
-       const actualizar = await userservice.actualizarUsuarios({id,nombre,correo,password});
+       const actualizar = await userservice.actualizarUsuarios(id, {nombre,correo,password});
 
-       if(!id) 
+       if(!actualizar)
         throw new AppError("usuario no encontrado",404)
 
-       return res.status(201).json({
+       return res.status(200).json({
         mensaje : "usuario actualizado",
         data:actualizar
        })

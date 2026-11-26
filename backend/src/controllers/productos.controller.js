@@ -1,17 +1,17 @@
-import { json } from "express"
+import { parseListQuery } from "../utils/listFilters.js";
 import * as productoservice from "../services/productos.service.js"
 import catchAsync from "../utils/catchAsync.js"
 import AppError from "../utils/AppError.js"
 
 const obtenerTodosLosProductos = async (req,res) =>{
     try{
-        const productos = await productoservice.obtenerTodosLosProductos()
+        const productos = await productoservice.obtenerTodosLosProductos(parseListQuery(req.query, "products"))
 
-        return(res.status(200).json({productos}))
+        return res.status(200).json(productos.pagination ? productos : { productos });
     }
    catch(error){
     console.error("no es posible obtener los productos debido a",{error})
-    res.status(500).json({mensaje:"error del servidor"})
+    res.status(error.statusCode || 500).json({mensaje: error.statusCode === 400 ? error.message : "error del servidor"})
    }
 }
 
@@ -47,7 +47,7 @@ const crearProductos = catchAsync(async (req,res,next) => {
 
         res.status(201).json({
             mensaje : "producto creado",
-            data : crearProductos
+            data : crearproducto
         });
 
 
@@ -68,7 +68,7 @@ const actualizarProducto = async(req,res) => {
         if(!nombre || !precio || !stock )
             return res.status(400).json({error:"los campos no pueder quedar vacios" })
 
-        const actualizarProducto = await productoservice.actualizarProducto({nombre,precio,stock,id})
+        await productoservice.actualizarProducto({nombre,precio,stock,id})
         res.status(200).json({
             mensaje : "producto creado",
             data : req.body
@@ -88,7 +88,7 @@ const eliminarProductos = async(req,res) => {
             res.status(400).json({mensaje:"id invalido"})
         }
 
-        const eliminarProductos = await productoservice.eliminarProductos(id)
+        await productoservice.eliminarProductos(id)
 
         res.status(200).json({mensaje : "usuario eliminado exitosamente"})
     } catch (error) {

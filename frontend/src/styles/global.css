@@ -280,3 +280,46 @@ tbody tr:hover {
     }
 
 }
+
+.pagination { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 18px; color: var(--muted); font-size: 12px; }
+.pagination label, .pagination-buttons { display: flex; align-items: center; gap: 10px; }
+.pagination select { padding: 7px 10px; }
+.pagination button { padding: 9px 13px; border: 1px solid var(--border); border-radius: 7px; background: white; color: #414955; }
+.pagination button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.pagination button:disabled { cursor: default; opacity: .45; }
+@media (max-width: 700px) { .pagination { align-items: flex-start; flex-direction: column; } .pagination-buttons { flex-wrap: wrap; } }
+
+.form-dialog { margin: auto; width: min(720px, calc(100% - 32px)); max-height: 90dvh; overflow: auto; padding: 28px; border: 1px solid var(--border); border-radius: 16px; color: inherit; box-shadow: 0 20px 70px #0003; }
+.form-dialog::backdrop { background: #131b2a80; backdrop-filter: blur(4px); }
+.form-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.form-dialog button { border: 1px solid var(--border); border-radius: 7px; padding: 10px 14px; }
+.form-dialog-header button { font-size: 22px; background: #f4f5f7; }
+.record-form { display: grid; gap: 18px; }
+.record-form fieldset { border: 0; min-width: 0; display: grid; gap: 18px; }
+.record-form label { display: grid; gap: 8px; font-size: 13px; font-weight: 600; }
+.record-form input, .record-form select { width: 100%; }
+.record-form small, .form-hint { font-size: 12px; font-weight: 400; color: var(--muted); line-height: 1.7; }
+.form-actions { display: flex; justify-content: flex-end; gap: 12px; }
+.form-actions button:first-child { background: #f4f5f7; color: #414955; }
+.sale-add-row { display: grid; grid-template-columns: minmax(0, 1fr) 90px auto; align-items: end; gap: 12px; }
+.sale-total { text-align: right; font-size: 17px; }
+@media(max-width: 700px) { .form-dialog { padding: 20px; } .sale-add-row { grid-template-columns: 1fr; } }
+
+.status-expired { background: #fff0ed; color: #b54435; }
+.renew-btn { border: 1px solid #f5d4bf; border-radius: 7px; padding: 8px 12px; background: #fff1e8; color: #b85120; font-size: 12px; font-weight: 600; }
+.renew-btn:hover { background: #ffe4d1; }
+
+.profile-details { display: grid; gap: 22px; padding: 28px; margin-top: 24px; max-width: 640px; border: 1px solid var(--border); border-radius: 12px; background: white; }
+.profile-details dt { color: var(--muted); font-size: 12px; margin-bottom: 7px; }
+.profile-details dd { font-size: 15px; overflow-wrap: anywhere; }
+.personal-table { margin-top: 24px; }
+
+.search-filters { border: 1px solid var(--border); border-radius: 12px; padding: 20px; background: white; margin: 24px 0 20px; }
+.search-filters-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; font-size: 13px; }
+.search-filters-heading button { border: 0; background: transparent; color: #b85120; font-size: 12px; }
+.search-filters-heading button:disabled { opacity: .5; cursor: default; }
+.search-filter-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 14px; }
+.search-filter-fields label { display: grid; gap: 7px; font-size: 11px; color: #68717e; }
+.search-filter-fields input, .search-filter-fields select { width: 100%; padding: 10px; font-size: 12px; }
+.search-filters > .form-hint { margin-top: 14px; }
+@media(max-width: 700px) { .search-filters { padding: 16px; } .search-filter-fields { grid-template-columns: 1fr; } }

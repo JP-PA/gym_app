@@ -12,8 +12,8 @@ export default function Dashboard() {
     const [error, setError] = useState(false);
     useEffect(() => {
         let active = true;
-        Promise.all([GetUsers(), GetProducts(), GetMemberships(), GetVentas()]).then(([users, products, memberships, sales]) => {
-            if (active) setStats({ users: users.length, products: products.productos.length, memberships: memberships.length, sales: sales.length });
+        Promise.all([GetUsers({ page: 1, limit: 1 }), GetProducts({ page: 1, limit: 1 }), GetMemberships({ page: 1, limit: 1 }), GetVentas({ page: 1, limit: 1 })]).then(([users, products, memberships, sales]) => {
+            if (active) setStats({ users: users.pagination.total, products: products.pagination.total, memberships: memberships.pagination.total, sales: sales.pagination.total });
         }).catch(() => { if (active) setError(true); });
         return () => { active = false; };
     }, []);

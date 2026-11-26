@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import useAuth from "../../auth/useAuth.js";
+import { Navigate, useNavigate } from "react-router-dom";
 import { FaDumbbell, FaArrowRight, FaCheck } from "react-icons/fa";
 import { loginUser } from "../../services/auth.service.js";
 import { RegisterUser } from "../../services/registre.service.js";
@@ -15,6 +16,7 @@ export default function Login() {
     const [messageType, setMessageType] = useState("error");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const auth = useAuth();
     async function handleSubmit(event) {
         event.preventDefault();
         setMessage("");
@@ -34,8 +36,8 @@ export default function Login() {
                 setMessageType("success");
             } else {
                 const data = await loginUser({ correo: email, password });
-                localStorage.setItem("token", data.token);
-                navigate("/dashboard");
+                auth.login(data);
+                navigate(data.usuario.role === "admin" ? "/dashboard" : "/mi", { replace: true });
             }
         } catch (error) {
             setMessage(error.response?.data?.mensaje || error.response?.data?.message || "No fue posible continuar. Revisa tus datos y la conexión con el servidor.");
@@ -43,6 +45,8 @@ export default function Login() {
             setLoading(false);
         }
     }
+    if (auth.loading) return <p className="empty-state" role="status">Comprobando tu sesión…</p>;
+    if (auth.user) return <Navigate to={auth.user.role === "admin" ? "/dashboard" : "/mi"} replace />;
     return <main className="login-page">
         <section className="login-story"><div className="brand"><span className="brand-icon"><FaDumbbell /></span><span>GYM<span className="brand-accent">.</span><small>ADMINISTRACIÓN</small></span></div>
             <div className="story-content"><span className="story-tag">EL SIGUIENTE NIVEL DE TU GIMNASIO</span><h1>Más enfoque.<br />Más energía.<br /><span>Más posibilidades.</span></h1><p>El espacio donde tu gimnasio se organiza y tu comunidad crece.</p><div className="story-features"><span><FaCheck /> Usuarios y membresías</span><span><FaCheck /> Productos y ventas</span></div></div>

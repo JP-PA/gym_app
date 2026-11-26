@@ -1,7 +1,7 @@
 import * as modelproductos from "../models/productos.model.js"
 
-const obtenerTodosLosProductos = async() =>{
-    const productos = await modelproductos.obtenerTodosLosProductos()
+const obtenerTodosLosProductos = async (pagination) =>{
+    const productos = await modelproductos.obtenerTodosLosProductos(pagination)
 
     if(!productos || productos.lenght === 0){
         throw new Error("No hay procductos para mostrar")
